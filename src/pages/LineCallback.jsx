@@ -9,56 +9,86 @@ const LineCallback = () => {
 
   useEffect(() => {
     const handleCallback = async () => {
-      const code = searchParams.get('code');
-      const state = searchParams.get('state');
-      const error = searchParams.get('error');
+      // ตรวจสอบ URL parameters จาก backend redirect
+      const success = searchParams.get('success');
+      const message = searchParams.get('message');
+      
+      console.log('🔍 LINE Callback URL params:', { success, message });
 
-      if (error) {
-        console.error('LINE Login error:', error);
+      if (success === 'true') {
+        // LINE connection สำเร็จ
+        setStatus('success');
+        console.log('✅ LINE connection successful:', message);
+        
+        // แจ้งให้หน้าหลักทราบว่าการเชื่อมต่อสำเร็จ
+        if (window.opener) {
+          window.opener.postMessage({ 
+            type: 'LINE_CONNECTED', 
+            success: true, 
+            message: decodeURIComponent(message || 'เชื่อมต่อ LINE สำเร็จ')
+          }, '*');
+        }
+      } else if (success === 'false') {
+        // LINE connection ไม่สำเร็จ
         setStatus('error');
-        setTimeout(() => {
-          window.close();
-        }, 3000);
-        return;
-      }
+        console.error('❌ LINE connection failed:', message);
+        
+        if (window.opener) {
+          window.opener.postMessage({ 
+            type: 'LINE_CONNECTED', 
+            success: false, 
+            error: decodeURIComponent(message || 'เกิดข้อผิดพลาดในการเชื่อมต่อ')
+          }, '*');
+        }
+      } else {
+        // ตรวจสอบ LINE Login parameters (สำหรับกรณีที่ยังใช้วิธีเก่า)
+        const code = searchParams.get('code');
+        const state = searchParams.get('state');
+        const error = searchParams.get('error');
 
-      if (!code || !state) {
-        console.error('Missing code or state');
-        setStatus('error');
-        setTimeout(() => {
-          window.close();
-        }, 3000);
-        return;
-      }
-
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/line/callback`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ code, state })
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-          setStatus('success');
-          // แจ้งให้หน้าหลักทราบว่าการเชื่อมต่อสำเร็จ
-          if (window.opener) {
-            window.opener.postMessage({ type: 'LINE_CONNECTED', success: true }, '*');
-          }
-        } else {
+        if (error) {
+          console.error('LINE Login error:', error);
           setStatus('error');
           if (window.opener) {
-            window.opener.postMessage({ type: 'LINE_CONNECTED', success: false, error: data.message }, '*');
+            window.opener.postMessage({ type: 'LINE_CONNECTED', success: false, error: 'LINE Login error' }, '*');
           }
-        }
-      } catch (error) {
-        console.error('Error processing LINE callback:', error);
-        setStatus('error');
-        if (window.opener) {
-          window.opener.postMessage({ type: 'LINE_CONNECTED', success: false, error: 'เกิดข้อผิดพลาด' }, '*');
+        } else if (!code || !state) {
+          console.error('Missing code or state');
+          setStatus('error');
+          if (window.opener) {
+            window.opener.postMessage({ type: 'LINE_CONNECTED', success: false, error: 'Missing parameters' }, '*');
+          }
+        } else {
+          // ใช้วิธีเก่า (POST to callback)
+          try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/line/callback`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ code, state })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+              setStatus('success');
+              if (window.opener) {
+                window.opener.postMessage({ type: 'LINE_CONNECTED', success: true }, '*');
+              }
+            } else {
+              setStatus('error');
+              if (window.opener) {
+                window.opener.postMessage({ type: 'LINE_CONNECTED', success: false, error: data.message }, '*');
+              }
+            }
+          } catch (error) {
+            console.error('Error processing LINE callback:', error);
+            setStatus('error');
+            if (window.opener) {
+              window.opener.postMessage({ type: 'LINE_CONNECTED', success: false, error: 'เกิดข้อผิดพลาด' }, '*');
+            }
+          }
         }
       }
 
