@@ -5,7 +5,8 @@ import { validateEmail, validatePassword, validateName, escapeHTML, rateLimiter 
 
 export default function Register() {
   const [step, setStep] = useState(1); // 1 = กรอกข้อมูล, 2 = OTP
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [otp, setOtp] = useState("");
@@ -23,8 +24,23 @@ export default function Register() {
   // 📨 ขอ OTP (ส่งข้อมูลสมัครเบื้องต้น)
   const handleSendOTP = async () => {
     // 🛡️ Input validation
-    if (!validateName(name)) {
+    if (!firstName.trim()) {
+      setMessage("⚠️ กรุณากรอกชื่อ");
+      return;
+    }
+
+    if (!lastName.trim()) {
+      setMessage("⚠️ กรุณากรอกนามสกุล");
+      return;
+    }
+
+    if (!validateName(firstName.trim())) {
       setMessage("⚠️ ชื่อต้องมี 2-50 ตัวอักษร และเป็นตัวอักษรเท่านั้น");
+      return;
+    }
+
+    if (!validateName(lastName.trim())) {
+      setMessage("⚠️ นามสกุลต้องมี 2-50 ตัวอักษร และเป็นตัวอักษรเท่านั้น");
       return;
     }
 
@@ -47,9 +63,10 @@ export default function Register() {
 
     setLoading(true);
     try {
-      // 🛡️ Sanitize inputs
+      // 🛡️ Sanitize inputs และรวมชื่อ-นามสกุล
+      const fullName = `${escapeHTML(firstName.trim())} ${escapeHTML(lastName.trim())}`;
       const sanitizedData = {
-        name: escapeHTML(name.trim()),
+        name: fullName,
         email: escapeHTML(email.trim().toLowerCase()),
         password: password
       };
@@ -77,7 +94,8 @@ export default function Register() {
 
       // Reset form หลังสมัครเสร็จ
       setStep(1);
-      setName("");
+      setFirstName("");
+      setLastName("");
       setEmail("");
       setPassword("");
       setOtp("");
@@ -135,7 +153,7 @@ export default function Register() {
                 {/* ชื่อ */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    ชื่อ-นามสกุล
+                    ชื่อ *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -145,10 +163,32 @@ export default function Register() {
                     </div>
                     <input
                       type="text"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
                       required
-                      placeholder="กรอกชื่อ-นามสกุลของคุณ"
+                      placeholder="กรอกชื่อของคุณ"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-500"
+                    />
+                  </div>
+                </div>
+
+                {/* นามสกุล */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    นามสกุล *
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </div>
+                    <input
+                      type="text"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      required
+                      placeholder="กรอกนามสกุลของคุณ"
                       className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-500"
                     />
                   </div>

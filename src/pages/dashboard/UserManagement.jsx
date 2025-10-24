@@ -60,13 +60,22 @@ export default function UserManagement() {
     const userToEdit = users.find(u => u.id === userId);
     if (!userToEdit) return;
 
+    // แยกชื่อและนามสกุล
+    const nameParts = userToEdit.name.split(' ');
+    const firstName = nameParts[0] || '';
+    const lastName = nameParts.slice(1).join(' ') || '';
+
     const { value: formValues } = await Swal.fire({
       title: 'แก้ไขข้อมูลผู้ใช้',
       html: `
         <div class="text-left space-y-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อ-นามสกุล</label>
-            <input id="name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent" value="${userToEdit.name}">
+            <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อ *</label>
+            <input id="firstName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent" value="${firstName}" placeholder="กรอกชื่อ">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">นามสกุล *</label>
+            <input id="lastName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent" value="${lastName}" placeholder="กรอกนามสกุล">
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">อีเมล</label>
@@ -96,16 +105,28 @@ export default function UserManagement() {
       confirmButtonColor: '#7c3aed',
       cancelButtonColor: '#6b7280',
       preConfirm: () => {
-        const name = document.getElementById('name').value;
+        const firstName = document.getElementById('firstName').value.trim();
+        const lastName = document.getElementById('lastName').value.trim();
         const email = document.getElementById('email').value;
         const role_id = parseInt(document.getElementById('role_id').value);
         const is_active = parseInt(document.getElementById('is_active').value);
 
-        if (!name || !email) {
-          Swal.showValidationMessage('กรุณากรอกข้อมูลให้ครบถ้วน');
+        if (!firstName) {
+          Swal.showValidationMessage('กรุณากรอกชื่อ');
           return false;
         }
 
+        if (!lastName) {
+          Swal.showValidationMessage('กรุณากรอกนามสกุล');
+          return false;
+        }
+
+        if (!email) {
+          Swal.showValidationMessage('กรุณากรอกอีเมล');
+          return false;
+        }
+
+        const name = `${firstName} ${lastName}`;
         return { name, email, role_id, is_active };
       }
     });
@@ -249,8 +270,12 @@ export default function UserManagement() {
       html: `
         <div class="text-left space-y-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อ-นามสกุล</label>
-            <input id="name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="กรอกชื่อ-นามสกุล">
+            <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อ *</label>
+            <input id="firstName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="กรอกชื่อ">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">นามสกุล *</label>
+            <input id="lastName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="กรอกนามสกุล">
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">อีเมล</label>
@@ -278,13 +303,29 @@ export default function UserManagement() {
       confirmButtonColor: '#7c3aed',
       cancelButtonColor: '#6b7280',
       preConfirm: () => {
-        const name = document.getElementById('name').value;
+        const firstName = document.getElementById('firstName').value.trim();
+        const lastName = document.getElementById('lastName').value.trim();
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         const role_id = parseInt(document.getElementById('role_id').value);
 
-        if (!name || !email || !password) {
-          Swal.showValidationMessage('กรุณากรอกข้อมูลให้ครบถ้วน');
+        if (!firstName) {
+          Swal.showValidationMessage('กรุณากรอกชื่อ');
+          return false;
+        }
+
+        if (!lastName) {
+          Swal.showValidationMessage('กรุณากรอกนามสกุล');
+          return false;
+        }
+
+        if (!email) {
+          Swal.showValidationMessage('กรุณากรอกอีเมล');
+          return false;
+        }
+
+        if (!password) {
+          Swal.showValidationMessage('กรุณากรอกรหัสผ่าน');
           return false;
         }
 
@@ -295,6 +336,7 @@ export default function UserManagement() {
           return false;
         }
 
+        const name = `${firstName} ${lastName}`;
         return { name, email, password, role_id };
       }
     });
