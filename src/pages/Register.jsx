@@ -71,7 +71,16 @@ export default function Register() {
         password: password
       };
       const res = await register(sanitizedData.name, sanitizedData.email, sanitizedData.password);
-      setMessage(res.data.message || "📩 ส่ง OTP สำเร็จแล้ว กรุณาตรวจอีเมลของคุณ");
+      
+      // ตรวจสอบว่า email ส่งสำเร็จหรือไม่
+      if (res.data.emailSent === false && res.data.otp) {
+        // Email ล้มเหลว แต่มี OTP
+        setMessage(`⚠️ ${res.data.message}\n\nรหัส OTP ของคุณคือ: ${res.data.otp}\n\nกรุณาใช้รหัสนี้เพื่อยืนยันการสมัครสมาชิก`);
+      } else {
+        // Email ส่งสำเร็จ
+        setMessage(res.data.message || "📩 ส่ง OTP สำเร็จแล้ว กรุณาตรวจอีเมลของคุณ");
+      }
+      
       setStep(2);
       setCountdown(60); // เริ่มนับถอยหลังใหม่
     } catch (err) {
