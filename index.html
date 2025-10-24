@@ -6,7 +6,7 @@
     <link href="/src/index.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <!-- 🛡️ Security Headers -->
+    <!-- 🛡️ Security Headers (only meta tags that work) -->
     <meta http-equiv="Content-Security-Policy" content="
       default-src 'self';
       script-src 'self' 'unsafe-inline' 'unsafe-eval';
@@ -20,7 +20,6 @@
       form-action 'self';
     ">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     
