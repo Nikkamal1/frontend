@@ -194,7 +194,7 @@ const LineConnection = ({ userId }) => {
           </div>
 
           {/* ส่งข้อความทดสอบ */}
-          <div className="space-y-3">
+          {/* <div className="space-y-3">
             <h4 className="font-medium text-gray-700">ส่งข้อความทดสอบ</h4>
             <div className="flex gap-2">
               <input
@@ -214,7 +214,7 @@ const LineConnection = ({ userId }) => {
                 ส่ง
               </button>
             </div>
-          </div>
+          </div> */}
 
           {/* ปุ่มยกเลิกการเชื่อมต่อ */}
           <button

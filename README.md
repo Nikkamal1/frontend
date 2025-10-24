@@ -28,7 +28,7 @@ npm install
 ### 2. ตั้งค่า Environment Variables
 ```bash
 # สร้างไฟล์ .env
-VITE_API_URL=https://backend-production-4864.up.railway.app
+VITE_API_URL=https://your-backend-domain.railway.app
 ```
 
 ### 3. รัน Development Server
@@ -65,7 +65,7 @@ src/
 
 ```env
 # Backend API URL
-VITE_API_URL=https://backend-production-4864.up.railway.app
+VITE_API_URL=https://your-backend-domain.railway.app
 ```
 
 ## 🚀 Deployment
@@ -108,3 +108,9 @@ ISC License
 ## 📞 Support
 
 หากมีปัญหาหรือคำถาม กรุณาติดต่อ [your-email@example.com]
+
+## 🔗 Links
+
+- **Backend Repository**: [https://github.com/your-username/backend](https://github.com/your-username/backend)
+- **Frontend Repository**: [https://github.com/your-username/frontend](https://github.com/your-username/frontend)
+- **Live Demo**: [https://your-frontend-domain.railway.app](https://your-frontend-domain.railway.app)
