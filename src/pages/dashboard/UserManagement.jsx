@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { getAllUsers, updateUser, createUser, deleteUser } from "../../services/api";
+import { getAllUsers, updateUser, createUser, deleteUser, adminUpdatePassword } from "../../services/api";
+import { validatePassword } from "../../utils/security";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
 
@@ -166,6 +167,82 @@ export default function UserManagement() {
     }
   };
 
+  const handleChangePassword = async (userId) => {
+    const userToChange = users.find(u => u.id === userId);
+    if (!userToChange) return;
+
+    const { value: formValues } = await Swal.fire({
+      title: 'เปลี่ยนรหัสผ่าน',
+      html: `
+        <div class="text-left space-y-4">
+          <div class="bg-blue-50 p-3 rounded-lg">
+            <p class="text-sm text-blue-800">
+              <strong>ผู้ใช้:</strong> ${userToChange.name}<br>
+              <strong>อีเมล:</strong> ${userToChange.email}
+            </p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">รหัสผ่านใหม่</label>
+            <input id="newPassword" type="password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="กรอกรหัสผ่านใหม่">
+            <p class="text-xs text-gray-500 mt-1">รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร มีตัวพิมพ์ใหญ่ ตัวพิมพ์เล็ก และตัวเลข</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">ยืนยันรหัสผ่าน</label>
+            <input id="confirmPassword" type="password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="ยืนยันรหัสผ่านใหม่">
+          </div>
+        </div>
+      `,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'เปลี่ยนรหัสผ่าน',
+      cancelButtonText: 'ยกเลิก',
+      confirmButtonColor: '#7c3aed',
+      cancelButtonColor: '#6b7280',
+      preConfirm: () => {
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (!newPassword || !confirmPassword) {
+          Swal.showValidationMessage('กรุณากรอกรหัสผ่านให้ครบถ้วน');
+          return false;
+        }
+
+        if (newPassword !== confirmPassword) {
+          Swal.showValidationMessage('รหัสผ่านไม่ตรงกัน');
+          return false;
+        }
+
+        // ตรวจสอบความแข็งแกร่งของรหัสผ่าน
+        const passwordValidation = validatePassword(newPassword);
+        if (!passwordValidation.isValid) {
+          Swal.showValidationMessage(passwordValidation.message);
+          return false;
+        }
+
+        return { newPassword };
+      }
+    });
+
+    if (formValues) {
+      try {
+        await adminUpdatePassword(userId, { newPassword: formValues.newPassword });
+        Swal.fire({
+          icon: 'success',
+          title: 'สำเร็จ!',
+          text: 'เปลี่ยนรหัสผ่านเรียบร้อยแล้ว',
+          timer: 2000,
+          showConfirmButton: false
+        });
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'เกิดข้อผิดพลาด',
+          text: error.response?.data?.message || 'ไม่สามารถเปลี่ยนรหัสผ่านได้'
+        });
+      }
+    }
+  };
+
   const handleAddUser = async () => {
     const { value: formValues } = await Swal.fire({
       title: 'เพิ่มผู้ใช้ใหม่',
@@ -182,6 +259,7 @@ export default function UserManagement() {
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">รหัสผ่าน</label>
             <input id="password" type="password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="กรอกรหัสผ่าน">
+            <p class="text-xs text-gray-500 mt-1">รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร มีตัวพิมพ์ใหญ่ ตัวพิมพ์เล็ก และตัวเลข</p>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">สิทธิ์</label>
@@ -210,8 +288,10 @@ export default function UserManagement() {
           return false;
         }
 
-        if (password.length < 6) {
-          Swal.showValidationMessage('รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร');
+        // ตรวจสอบความแข็งแกร่งของรหัสผ่าน
+        const passwordValidation = validatePassword(password);
+        if (!passwordValidation.isValid) {
+          Swal.showValidationMessage(passwordValidation.message);
           return false;
         }
 
@@ -333,6 +413,12 @@ export default function UserManagement() {
                           className="text-blue-600 hover:text-blue-800 text-xs sm:text-sm font-medium px-2 sm:px-3 py-1 rounded-md hover:bg-blue-50 transition-colors"
                         >
                           แก้ไข
+                        </button>
+                        <button 
+                          onClick={() => handleChangePassword(user.id)}
+                          className="text-green-600 hover:text-green-800 text-xs sm:text-sm font-medium px-2 sm:px-3 py-1 rounded-md hover:bg-green-50 transition-colors"
+                        >
+                          เปลี่ยนรหัสผ่าน
                         </button>
                         <button 
                           onClick={() => handleDeleteUser(user.id)}

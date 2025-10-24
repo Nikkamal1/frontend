@@ -73,6 +73,10 @@ export const updateProfile = (id, data) =>
 export const updatePassword = (id, data) =>
   apiClient.put(`/profile/${id}`, { ...data, type: 'password' });
 
+// อัพเดทรหัสผ่านโดยแอดมิน (ไม่ต้องใส่รหัสผ่านปัจจุบัน)
+export const adminUpdatePassword = (id, data) =>
+  apiClient.put(`/profile/${id}`, { ...data, type: 'admin_password' });
+
 // ใช้ endpoint เดียวกับ updateProfile สำหรับตอนนี้
 export const deleteAccount = (id) =>
   apiClient.put(`/profile/${id}`, { type: 'delete' });
