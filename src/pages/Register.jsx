@@ -82,7 +82,7 @@ export default function Register() {
       }
       
       setStep(2);
-      setCountdown(900); // เริ่มนับถอยหลัง 15 นาที (900 วินาที)
+      setCountdown(600); // เริ่มนับถอยหลัง 10 นาที (600 วินาที)
     } catch (err) {
       setMessage(err.response?.data?.message || "❌ ไม่สามารถส่ง OTP ได้");
     } finally {
@@ -152,7 +152,7 @@ export default function Register() {
                     </Link>
                   </>
                 ) : (
-                  `กรุณากรอกรหัส OTP ที่ส่งไปยัง ${email} (ใช้ได้ 15 นาที)`
+                  `กรุณากรอกรหัส OTP ที่ส่งไปยัง ${email} (ใช้ได้ 15 นาที, ขอใหม่ได้ใน 10 นาที)`
                 )}
               </p>
             </div>
