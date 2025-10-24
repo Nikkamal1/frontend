@@ -184,7 +184,7 @@ export default function UserManagement() {
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">รหัสผ่านใหม่</label>
             <input id="newPassword" type="password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="กรอกรหัสผ่านใหม่">
-            <p class="text-xs text-gray-500 mt-1">รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร มีตัวพิมพ์ใหญ่ ตัวพิมพ์เล็ก และตัวเลข</p>
+            <p class="text-xs text-gray-500 mt-1">รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร และตัวเลข</p>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">ยืนยันรหัสผ่าน</label>
@@ -259,7 +259,7 @@ export default function UserManagement() {
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">รหัสผ่าน</label>
             <input id="password" type="password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="กรอกรหัสผ่าน">
-            <p class="text-xs text-gray-500 mt-1">รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร มีตัวพิมพ์ใหญ่ ตัวพิมพ์เล็ก และตัวเลข</p>
+            <p class="text-xs text-gray-500 mt-1">รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร และตัวเลข</p>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">สิทธิ์</label>

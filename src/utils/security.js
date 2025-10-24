@@ -42,14 +42,6 @@ export const validatePassword = (password) => {
     return { isValid: false, message: 'รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร' };
   }
 
-  if (!/(?=.*[a-z])/.test(password)) {
-    return { isValid: false, message: 'รหัสผ่านต้องมีตัวอักษรพิมพ์เล็ก' };
-  }
-
-  if (!/(?=.*[A-Z])/.test(password)) {
-    return { isValid: false, message: 'รหัสผ่านต้องมีตัวอักษรพิมพ์ใหญ่' };
-  }
-
   if (!/(?=.*\d)/.test(password)) {
     return { isValid: false, message: 'รหัสผ่านต้องมีตัวเลข' };
   }

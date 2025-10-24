@@ -196,6 +196,7 @@ export default function Register() {
                       className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-500"
                     />
                   </div>
+                  <p className="text-xs text-gray-500 mt-1">รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร และตัวเลข</p>
                 </div>
 
                 {/* Send OTP Button */}
