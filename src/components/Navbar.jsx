@@ -25,8 +25,6 @@ export default function Navbar({ user, onLogout, onToggleSidebar }) {
       if (savedNotifications) {
         try {
           const parsedNotifications = JSON.parse(savedNotifications);
-          console.log('Loaded notifications from localStorage:', parsedNotifications);
-          console.log('Sample notification timestamp:', parsedNotifications[0]?.timestamp, typeof parsedNotifications[0]?.timestamp);
           
           setNotifications(parsedNotifications);
           
@@ -34,7 +32,6 @@ export default function Navbar({ user, onLogout, onToggleSidebar }) {
           const unread = parsedNotifications.filter(notif => !notif.read).length;
           setUnreadCount(unread);
           
-          console.log('Loaded notifications from localStorage:', parsedNotifications.length);
         } catch (error) {
           console.error('Error parsing saved notifications:', error);
         }
@@ -54,7 +51,6 @@ export default function Navbar({ user, onLogout, onToggleSidebar }) {
             const parsedAppointments = JSON.parse(savedAllAppointments);
             setPreviousAllAppointments(parsedAppointments);
             previousAllAppointmentsRef.current = parsedAppointments;
-            console.log('Loaded all appointments from localStorage for admin:', parsedAppointments.length);
           } catch (error) {
             console.error('Error parsing saved all appointments:', error);
           }
@@ -67,8 +63,6 @@ export default function Navbar({ user, onLogout, onToggleSidebar }) {
             const parsedAppointments = JSON.parse(savedAppointments);
             setPreviousAppointments(parsedAppointments);
             previousAppointmentsRef.current = parsedAppointments;
-            console.log('Loaded all appointments from localStorage for staff:', parsedAppointments.length);
-            console.log('Setting previousAppointments state to:', parsedAppointments);
           } catch (error) {
             console.error('Error parsing saved appointments:', error);
           }
@@ -81,8 +75,6 @@ export default function Navbar({ user, onLogout, onToggleSidebar }) {
             const parsedAppointments = JSON.parse(savedAppointments);
             setPreviousAppointments(parsedAppointments);
             previousAppointmentsRef.current = parsedAppointments;
-            console.log('Loaded previous appointments from localStorage:', parsedAppointments.length);
-            console.log('Setting previousAppointments state to:', parsedAppointments);
           } catch (error) {
             console.error('Error parsing saved appointments:', error);
           }
@@ -104,50 +96,28 @@ export default function Navbar({ user, onLogout, onToggleSidebar }) {
         const res = await getAllAppointments(1, 1000);
         const currentAppointments = res.data.appointments || [];
         
-        console.log('Admin ID:', user.id);
-        console.log('Current appointments:', currentAppointments.length);
-        console.log('Previous appointments (ref):', previousAllAppointmentsRef.current.length);
-        console.log('Current appointments data:', currentAppointments);
-        console.log('Previous appointments data (ref):', previousAllAppointmentsRef.current);
-        
         if (previousAllAppointmentsRef.current.length > 0) {
-          console.log('✅ Previous appointments found, checking for new appointments...');
           checkNewAppointments(previousAllAppointmentsRef.current, currentAppointments);
-        } else {
-          console.log('❌ No previous appointments found - first load');
         }
         
         // บันทึกข้อมูลการจองทั้งหมดลงใน localStorage สำหรับ admin
         setPreviousAllAppointments(currentAppointments);
         previousAllAppointmentsRef.current = currentAppointments;
         localStorage.setItem('all_appointments', JSON.stringify(currentAppointments));
-        console.log('Saved all appointments to localStorage for admin');
       } else if (user?.role === "staff") {
         // สำหรับ staff: ตรวจสอบการเปลี่ยนแปลงสถานะของทุกการจอง
         const res = await getAllAppointments(1, 1000);
         const allAppointments = res.data.appointments || [];
         
-        console.log('Staff ID:', user.id);
-        console.log('All appointments:', allAppointments.length);
-        console.log('Previous appointments (ref):', previousAppointmentsRef.current.length);
-        console.log('All appointments data:', allAppointments);
-        console.log('Previous appointments data (ref):', previousAppointmentsRef.current);
-        
         // ตรวจสอบการเปลี่ยนแปลงสถานะ (รวมถึงครั้งแรกที่โหลด)
-        console.log('Checking if previousAppointmentsRef.current.length > 0:', previousAppointmentsRef.current.length > 0);
         if (previousAppointmentsRef.current.length > 0) {
-          console.log('✅ Previous appointments found, checking for changes...');
           checkStatusChanges(previousAppointmentsRef.current, allAppointments);
-        } else {
-          // ครั้งแรกที่โหลด - เก็บข้อมูลไว้สำหรับการเปรียบเทียบครั้งต่อไป
-          console.log('❌ No previous appointments found - first load');
         }
         
         // บันทึกข้อมูลการจองทั้งหมดลงใน localStorage สำหรับ staff
         setPreviousAppointments(allAppointments);
         previousAppointmentsRef.current = allAppointments;
         localStorage.setItem(`appointments_${user.id}`, JSON.stringify(allAppointments));
-        console.log('Saved all appointments to localStorage for staff:', user.id);
       } else {
         // สำหรับ user: ตรวจสอบการเปลี่ยนแปลงสถานะของตัวเองเท่านั้น
         const res = await getAllAppointments(1, 1000);
@@ -156,28 +126,15 @@ export default function Navbar({ user, onLogout, onToggleSidebar }) {
         // กรองเฉพาะการจองของ user นี้
         const userAppointments = allAppointments.filter(apt => apt.user_id === user.id);
         
-        console.log('User ID:', user.id);
-        console.log('All appointments:', allAppointments.length);
-        console.log('User appointments:', userAppointments.length);
-        console.log('Previous appointments (ref):', previousAppointmentsRef.current.length);
-        console.log('User appointments data:', userAppointments);
-        console.log('Previous appointments data (ref):', previousAppointmentsRef.current);
-        
         // ตรวจสอบการเปลี่ยนแปลงสถานะ (รวมถึงครั้งแรกที่โหลด)
-        console.log('Checking if previousAppointmentsRef.current.length > 0:', previousAppointmentsRef.current.length > 0);
         if (previousAppointmentsRef.current.length > 0) {
-          console.log('✅ Previous appointments found, checking for changes...');
           checkStatusChanges(previousAppointmentsRef.current, userAppointments);
-        } else {
-          // ครั้งแรกที่โหลด - เก็บข้อมูลไว้สำหรับการเปรียบเทียบครั้งต่อไป
-          console.log('❌ No previous appointments found - first load');
         }
         
         // บันทึกข้อมูลการจองลงใน localStorage
         setPreviousAppointments(userAppointments);
         previousAppointmentsRef.current = userAppointments;
         localStorage.setItem(`appointments_${user.id}`, JSON.stringify(userAppointments));
-        console.log('Saved appointments to localStorage for user:', user.id);
       }
     } catch (err) {
       console.error("Error fetching appointments:", err);
@@ -187,28 +144,12 @@ export default function Navbar({ user, onLogout, onToggleSidebar }) {
   const checkStatusChanges = (oldAppointments, newAppointments) => {
     const changes = [];
     
-    console.log('=== Checking status changes ===');
-    console.log('Old appointments count:', oldAppointments.length);
-    console.log('New appointments count:', newAppointments.length);
-    console.log('Old appointments:', oldAppointments);
-    console.log('New appointments:', newAppointments);
     
     newAppointments.forEach(newAppointment => {
       const oldAppointment = oldAppointments.find(old => old.id === newAppointment.id);
       
-      console.log(`Checking appointment ID ${newAppointment.id}:`, {
-        found: !!oldAppointment,
-        oldStatus: oldAppointment?.status,
-        newStatus: newAppointment.status,
-        statusChanged: oldAppointment && oldAppointment.status !== newAppointment.status
-      });
       
       if (oldAppointment && oldAppointment.status !== newAppointment.status) {
-        console.log('✅ Status change detected:', {
-          id: newAppointment.id,
-          oldStatus: oldAppointment.status,
-          newStatus: newAppointment.status
-        });
         
         const change = {
           id: newAppointment.id,
@@ -231,41 +172,23 @@ export default function Navbar({ user, onLogout, onToggleSidebar }) {
     });
     
     if (changes.length > 0) {
-      console.log('🎉 Found changes:', changes);
       const newNotifications = [...changes, ...notifications];
       setNotifications(newNotifications);
       setUnreadCount(prev => prev + changes.length);
       saveNotificationsToStorage(newNotifications);
-    } else {
-      console.log('❌ No status changes found');
     }
   };
 
   const checkNewAppointments = (oldAppointments, newAppointments) => {
     const changes = [];
     
-    console.log('=== Checking for new appointments ===');
-    console.log('Old appointments count:', oldAppointments.length);
-    console.log('New appointments count:', newAppointments.length);
-    console.log('Old appointments:', oldAppointments);
-    console.log('New appointments:', newAppointments);
     
     // หาการจองใหม่ (ID ที่ไม่มีในรายการเก่า)
     newAppointments.forEach(newAppointment => {
       const isNew = !oldAppointments.find(old => old.id === newAppointment.id);
       
-      console.log(`Checking appointment ID ${newAppointment.id}:`, {
-        isNew: isNew,
-        patientName: `${newAppointment.first_name} ${newAppointment.last_name}`,
-        hospital: newAppointment.hospital
-      });
       
       if (isNew) {
-        console.log('✅ New appointment detected:', {
-          id: newAppointment.id,
-          patientName: `${newAppointment.first_name} ${newAppointment.last_name}`,
-          hospital: newAppointment.hospital
-        });
         
         const change = {
           id: newAppointment.id,
@@ -287,13 +210,10 @@ export default function Navbar({ user, onLogout, onToggleSidebar }) {
     });
     
     if (changes.length > 0) {
-      console.log('🎉 Found new appointments:', changes);
       const newNotifications = [...changes, ...notifications];
       setNotifications(newNotifications);
       setUnreadCount(prev => prev + changes.length);
       saveNotificationsToStorage(newNotifications);
-    } else {
-      console.log('❌ No new appointments found');
     }
   };
 
@@ -419,16 +339,9 @@ export default function Navbar({ user, onLogout, onToggleSidebar }) {
     // แปลง timestamp ให้เป็น Date object ถ้าเป็น string
     const notificationTime = new Date(timestamp);
     
-    console.log('Formatting time:', {
-      originalTimestamp: timestamp,
-      type: typeof timestamp,
-      convertedTime: notificationTime,
-      isValid: !isNaN(notificationTime.getTime())
-    });
     
     // ตรวจสอบว่า timestamp ถูกต้องหรือไม่
     if (isNaN(notificationTime.getTime())) {
-      console.log('Invalid timestamp, returning default message');
       return 'เมื่อไม่นานมานี้';
     }
     

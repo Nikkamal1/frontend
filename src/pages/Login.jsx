@@ -25,7 +25,6 @@ export default function Login() {
         return;
       }
 
-      console.log("Login response:", res.data);
 
       // ✅ ล้างข้อมูลเก่าก่อน
       localStorage.removeItem("user");

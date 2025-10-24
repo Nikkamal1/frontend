@@ -176,7 +176,6 @@ export default function AppointmentForm() {
     };
 
     try {
-      console.log("Sending appointment data:", payload);
       const user =
         JSON.parse(localStorage.getItem("user")) ||
         JSON.parse(sessionStorage.getItem("user"));

@@ -13,12 +13,10 @@ const LineCallback = () => {
       const success = searchParams.get('success');
       const message = searchParams.get('message');
       
-      console.log('🔍 LINE Callback URL params:', { success, message });
 
       if (success === 'true') {
         // LINE connection สำเร็จ
         setStatus('success');
-        console.log('✅ LINE connection successful:', message);
         
         // แจ้งให้หน้าหลักทราบว่าการเชื่อมต่อสำเร็จ
         if (window.opener) {

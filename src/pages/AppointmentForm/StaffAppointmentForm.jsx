@@ -222,7 +222,6 @@ export default function StaffAppointmentForm() {
     };
 
     try {
-      console.log("📤 Sending staff appointment:", payload);
       const res = await createAppointmentByStaff(payload);
       if (res.data.success) {
         Swal.fire({
