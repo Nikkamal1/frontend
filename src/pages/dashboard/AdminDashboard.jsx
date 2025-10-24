@@ -86,7 +86,6 @@ export default function AdminDashboard({ user, onLogout }) {
       });
 
     } catch (error) {
-      console.error("Error fetching dashboard data:", error);
       Swal.fire({
         icon: "error",
         title: "เกิดข้อผิดพลาด",
@@ -180,7 +179,6 @@ export default function AdminDashboard({ user, onLogout }) {
           });
 
         } catch (error) {
-          console.error("PDF download error:", error);
           Swal.fire({
             icon: "error",
             title: "เกิดข้อผิดพลาด",

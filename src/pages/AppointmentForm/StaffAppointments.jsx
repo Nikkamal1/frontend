@@ -27,7 +27,6 @@ export default function StaffAppointments() {
       setTotalAppointments(data.total || 0);
       setCurrentPage(page);
     } catch (error) {
-      console.error("Error fetching appointments:", error);
       Swal.fire({
         icon: "error",
         title: "เกิดข้อผิดพลาด",

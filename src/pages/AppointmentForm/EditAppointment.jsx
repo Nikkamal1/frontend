@@ -57,7 +57,6 @@ export default function EditAppointment() {
                 setHospitals(locRes.data.hospitals || []);
                 setLoading(false);
             } catch (err) {
-                console.error(err);
                 Swal.fire({
                     icon: "error",
                     title: "เกิดข้อผิดพลาด",
@@ -128,7 +127,6 @@ export default function EditAppointment() {
                 navigate("/user/bookings");
             });
         } catch (err) {
-            console.error(err);
             Swal.fire({
                 icon: "error",
                 title: "เกิดข้อผิดพลาด",

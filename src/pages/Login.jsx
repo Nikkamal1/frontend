@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { login } from "../services/api.js";
+import { validateEmail, escapeHTML, rateLimiter } from "../utils/security.js";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -15,8 +16,30 @@ export default function Login() {
     setMessage("");
     setLoading(true);
 
+    // 🛡️ Input validation
+    if (!validateEmail(email)) {
+      setMessage("❌ กรุณากรอกอีเมลที่ถูกต้อง");
+      setLoading(false);
+      return;
+    }
+
+    if (!password || password.length < 6) {
+      setMessage("❌ รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร");
+      setLoading(false);
+      return;
+    }
+
+    // 🛡️ Rate limiting
+    if (!rateLimiter.isAllowed('login')) {
+      setMessage("❌ กำลังพยายามเข้าสู่ระบบบ่อยเกินไป กรุณารอสักครู่");
+      setLoading(false);
+      return;
+    }
+
     try {
-      const res = await login(email, password);
+      // 🛡️ Sanitize inputs
+      const sanitizedEmail = escapeHTML(email.trim());
+      const res = await login(sanitizedEmail, password);
 
       // ✅ ตรวจสอบว่ามีข้อมูล user จาก API หรือไม่
       const user = res?.data?.user || res?.data;
@@ -54,7 +77,6 @@ export default function Login() {
       }
 
     } catch (err) {
-      console.error("Login error:", err);
       setMessage(err.response?.data?.message || "❌ อีเมลหรือรหัสผ่านไม่ถูกต้อง");
     } finally {
       setLoading(false);
@@ -144,9 +166,9 @@ export default function Login() {
                   />
                   <span className="font-medium">จำฉันไว้</span>
                 </label>
-                <Link to="#" className="text-sm text-blue-600 font-medium hover:text-blue-700 transition-colors">
+                {/* <Link to="#" className="text-sm text-blue-600 font-medium hover:text-blue-700 transition-colors">
                   ลืมรหัสผ่าน?
-                </Link>
+                </Link> */}
               </div>
 
               {/* Login Button */}

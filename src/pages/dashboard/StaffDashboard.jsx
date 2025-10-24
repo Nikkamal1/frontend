@@ -44,7 +44,6 @@ export default function StaffDashboard({ user, onLogout }) {
       setRecentAppointments(appointments.slice(0, 5));
 
     } catch (error) {
-      console.error("Error fetching dashboard data:", error);
       Swal.fire({
         icon: "error",
         title: "เกิดข้อผิดพลาด",

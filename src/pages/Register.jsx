@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { register, verifyOTP } from "../services/api.js";
+import { validateEmail, validatePassword, validateName, escapeHTML, rateLimiter } from "../utils/security.js";
 
 export default function Register() {
   const [step, setStep] = useState(1); // 1 = กรอกข้อมูล, 2 = OTP
@@ -21,13 +22,38 @@ export default function Register() {
 
   // 📨 ขอ OTP (ส่งข้อมูลสมัครเบื้องต้น)
   const handleSendOTP = async () => {
-    if (!name || !email || !password) {
-      setMessage("⚠️ กรุณากรอกข้อมูลให้ครบ");
+    // 🛡️ Input validation
+    if (!validateName(name)) {
+      setMessage("⚠️ ชื่อต้องมี 2-50 ตัวอักษร และเป็นตัวอักษรเท่านั้น");
       return;
     }
+
+    if (!validateEmail(email)) {
+      setMessage("⚠️ กรุณากรอกอีเมลที่ถูกต้อง");
+      return;
+    }
+
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      setMessage(`⚠️ ${passwordValidation.message}`);
+      return;
+    }
+
+    // 🛡️ Rate limiting
+    if (!rateLimiter.isAllowed('register')) {
+      setMessage("❌ กำลังพยายามสมัครสมาชิกบ่อยเกินไป กรุณารอสักครู่");
+      return;
+    }
+
     setLoading(true);
     try {
-      const res = await register(name, email, password);
+      // 🛡️ Sanitize inputs
+      const sanitizedData = {
+        name: escapeHTML(name.trim()),
+        email: escapeHTML(email.trim().toLowerCase()),
+        password: password
+      };
+      const res = await register(sanitizedData.name, sanitizedData.email, sanitizedData.password);
       setMessage(res.data.message || "📩 ส่ง OTP สำเร็จแล้ว กรุณาตรวจอีเมลของคุณ");
       setStep(2);
       setCountdown(60); // เริ่มนับถอยหลังใหม่

@@ -40,7 +40,6 @@ export default function AppointmentCalendar() {
       setAppointments(res.data);
       setFilteredAppointments(res.data);
     } catch (err) {
-      console.error("Error fetching appointments:", err);
       Swal.fire({
         icon: "error",
         title: "เกิดข้อผิดพลาด",

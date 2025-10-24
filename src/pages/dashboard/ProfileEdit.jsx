@@ -32,7 +32,6 @@ export default function ProfileEdit() {
       const { data } = await getProfile(userId);
       setForm({ name: data.name, email: data.email });
     } catch (err) {
-      console.error(err);
       Swal.fire({
         icon: "error",
         title: "เกิดข้อผิดพลาด",
@@ -69,7 +68,6 @@ export default function ProfileEdit() {
         }
       });
     } catch (err) {
-      console.error(err);
       Swal.fire({
         icon: "error",
         title: "เกิดข้อผิดพลาด",
@@ -120,7 +118,6 @@ export default function ProfileEdit() {
         showConfirmButton: false,
       });
     } catch (err) {
-      console.error(err);
       
       // ตรวจสอบว่าเป็น 404 หรือไม่
       if (err.response?.status === 404) {
@@ -186,7 +183,6 @@ export default function ProfileEdit() {
           navigate("/login");
         });
       } catch (err) {
-        console.error(err);
         
         // ตรวจสอบว่าเป็น 404 หรือไม่
         if (err.response?.status === 404) {

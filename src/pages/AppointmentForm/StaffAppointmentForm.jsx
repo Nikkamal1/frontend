@@ -42,7 +42,7 @@ export default function StaffAppointmentForm() {
   useEffect(() => {
     getUsers()
       .then((res) => setUsers(res.data))
-      .catch((err) => console.error("Error loading users:", err));
+      .catch((err) => {});
   }, []);
 
   // เมื่อเลือกผู้ใช้ ให้ populate ชื่อ เบอร์โทร
@@ -72,7 +72,7 @@ export default function StaffAppointmentForm() {
         setProvinces(provinceList);
         setHospitals(data.hospitals.map((name, i) => ({ id: i + 1, name })));
       })
-      .catch((err) => console.error("Error loading locations:", err));
+      .catch((err) => {});
   }, []);
 
   // เมื่อเลือกจังหวัด
@@ -247,7 +247,6 @@ export default function StaffAppointmentForm() {
         });
       }
     } catch (error) {
-      console.error("❌ Create appointment error:", error);
       Swal.fire({
         icon: "error",
         title: "เกิดข้อผิดพลาด",

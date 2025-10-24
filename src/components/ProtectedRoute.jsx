@@ -10,7 +10,6 @@ export default function ProtectedRoute({ allowedRoles = [], children }) {
       JSON.parse(localStorage.getItem("user")) ||
       JSON.parse(sessionStorage.getItem("user"));
   } catch (err) {
-    console.warn("Error parsing user data:", err);
     user = null;
   }
 

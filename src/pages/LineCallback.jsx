@@ -29,7 +29,6 @@ const LineCallback = () => {
       } else if (success === 'false') {
         // LINE connection ไม่สำเร็จ
         setStatus('error');
-        console.error('❌ LINE connection failed:', message);
         
         if (window.opener) {
           window.opener.postMessage({ 
@@ -45,13 +44,11 @@ const LineCallback = () => {
         const error = searchParams.get('error');
 
         if (error) {
-          console.error('LINE Login error:', error);
           setStatus('error');
           if (window.opener) {
             window.opener.postMessage({ type: 'LINE_CONNECTED', success: false, error: 'LINE Login error' }, '*');
           }
         } else if (!code || !state) {
-          console.error('Missing code or state');
           setStatus('error');
           if (window.opener) {
             window.opener.postMessage({ type: 'LINE_CONNECTED', success: false, error: 'Missing parameters' }, '*');
@@ -81,7 +78,6 @@ const LineCallback = () => {
               }
             }
           } catch (error) {
-            console.error('Error processing LINE callback:', error);
             setStatus('error');
             if (window.opener) {
               window.opener.postMessage({ type: 'LINE_CONNECTED', success: false, error: 'เกิดข้อผิดพลาด' }, '*');

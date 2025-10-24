@@ -19,7 +19,6 @@ export default function UserManagement() {
       const usersData = usersRes.data || [];
       setUsers(usersData);
     } catch (error) {
-      console.error("Error fetching users:", error);
       Swal.fire({
         icon: "error",
         title: "เกิดข้อผิดพลาด",

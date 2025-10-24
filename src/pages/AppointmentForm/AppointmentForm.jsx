@@ -52,7 +52,7 @@ export default function AppointmentForm() {
         setProvinces(provinceList);
         setHospitals(data.hospitals.map((name, i) => ({ id: i + 1, name })));
       })
-      .catch((err) => console.error("Error loading locations:", err));
+      .catch((err) => {});
   }, []);
 
   // เมื่อเลือกจังหวัด
@@ -217,7 +217,6 @@ export default function AppointmentForm() {
         navigate("/user/bookings"); // ✅ redirect
       }
     } catch (error) {
-      console.error("Create appointment error:", error);
       Swal.fire({
         icon: "error",
         title: "เกิดข้อผิดพลาด",

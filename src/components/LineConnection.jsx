@@ -26,7 +26,6 @@ const LineConnection = ({ userId }) => {
         setProfile(data.profile);
       }
     } catch (error) {
-      console.error('Error checking LINE status:', error);
     }
   };
 
@@ -59,7 +58,6 @@ const LineConnection = ({ userId }) => {
         throw new Error(data.message);
       }
     } catch (error) {
-      console.error('Error connecting LINE:', error);
       Swal.fire({
         icon: 'error',
         title: 'เกิดข้อผิดพลาด',
@@ -104,7 +102,6 @@ const LineConnection = ({ userId }) => {
           throw new Error(data.message);
         }
       } catch (error) {
-        console.error('Error disconnecting LINE:', error);
         Swal.fire({
           icon: 'error',
           title: 'เกิดข้อผิดพลาด',
@@ -152,7 +149,6 @@ const LineConnection = ({ userId }) => {
         throw new Error(data.message);
       }
     } catch (error) {
-      console.error('Error sending test message:', error);
       Swal.fire({
         icon: 'error',
         title: 'เกิดข้อผิดพลาด',

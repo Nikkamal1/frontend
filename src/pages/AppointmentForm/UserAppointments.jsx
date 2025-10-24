@@ -35,7 +35,6 @@ export default function UserAppointments() {
       const res = await getUserAppointments(userId);
       setAppointments(res.data);
     } catch (err) {
-      console.error("Error fetching appointments:", err);
     }
   };
 

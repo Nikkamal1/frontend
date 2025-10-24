@@ -20,7 +20,6 @@ export default function StaffCalendar() {
       const response = await getAllAppointments(1, 1000); // ดึงข้อมูลทั้งหมด
       setAppointments(response.data.appointments || []);
     } catch (error) {
-      console.error("Error fetching appointments:", error);
       Swal.fire({
         icon: "error",
         title: "เกิดข้อผิดพลาด",

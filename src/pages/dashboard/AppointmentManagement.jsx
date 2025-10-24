@@ -29,7 +29,6 @@ export default function AppointmentManagement() {
       setUsers(usersData);
 
     } catch (error) {
-      console.error("Error fetching data:", error);
       Swal.fire({
         icon: "error",
         title: "เกิดข้อผิดพลาด",
@@ -124,7 +123,6 @@ export default function AppointmentManagement() {
         });
         fetchData(); // รีเฟรชข้อมูล
       } catch (error) {
-        console.error('Update appointment status error:', error);
         Swal.fire({
           icon: 'error',
           title: 'เกิดข้อผิดพลาด',

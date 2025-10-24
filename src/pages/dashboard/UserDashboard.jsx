@@ -26,7 +26,6 @@ export default function UserDashboard() {
       const res = await getUserAppointments(userId);
       setAppointments(res.data);
     } catch (err) {
-      console.error("Error fetching appointments:", err);
       Swal.fire({
         icon: "error",
         title: "เกิดข้อผิดพลาด",

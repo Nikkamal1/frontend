@@ -48,7 +48,6 @@ export default function StaffEditAppointment() {
         longitude: appointment.longitude || ""
       });
     } catch (error) {
-      console.error("Error fetching appointment:", error);
       Swal.fire({
         icon: "error",
         title: "เกิดข้อผิดพลาด",
@@ -79,7 +78,6 @@ export default function StaffEditAppointment() {
       // Transform hospitals data
       setHospitals(data.hospitals.map((name, i) => ({ id: i + 1, name })));
     } catch (error) {
-      console.error("Error fetching locations:", error);
     }
   };
 
@@ -202,7 +200,6 @@ export default function StaffEditAppointment() {
         });
       },
       (error) => {
-        console.error("Geolocation error:", error);
         let errorMessage = "ไม่สามารถระบุตำแหน่งได้";
         
         switch (error.code) {
@@ -322,7 +319,6 @@ export default function StaffEditAppointment() {
       });
       
     } catch (error) {
-      console.error("Error updating appointment:", error);
       Swal.fire({
         icon: "error",
         title: "เกิดข้อผิดพลาด",

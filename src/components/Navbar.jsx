@@ -33,7 +33,6 @@ export default function Navbar({ user, onLogout, onToggleSidebar }) {
           setUnreadCount(unread);
           
         } catch (error) {
-          console.error('Error parsing saved notifications:', error);
         }
       }
     }
@@ -52,7 +51,6 @@ export default function Navbar({ user, onLogout, onToggleSidebar }) {
             setPreviousAllAppointments(parsedAppointments);
             previousAllAppointmentsRef.current = parsedAppointments;
           } catch (error) {
-            console.error('Error parsing saved all appointments:', error);
           }
         }
       } else if (user.role === "staff") {
@@ -64,7 +62,6 @@ export default function Navbar({ user, onLogout, onToggleSidebar }) {
             setPreviousAppointments(parsedAppointments);
             previousAppointmentsRef.current = parsedAppointments;
           } catch (error) {
-            console.error('Error parsing saved appointments:', error);
           }
         }
       } else {
@@ -76,7 +73,6 @@ export default function Navbar({ user, onLogout, onToggleSidebar }) {
             setPreviousAppointments(parsedAppointments);
             previousAppointmentsRef.current = parsedAppointments;
           } catch (error) {
-            console.error('Error parsing saved appointments:', error);
           }
         }
       }
@@ -137,7 +133,6 @@ export default function Navbar({ user, onLogout, onToggleSidebar }) {
         localStorage.setItem(`appointments_${user.id}`, JSON.stringify(userAppointments));
       }
     } catch (err) {
-      console.error("Error fetching appointments:", err);
     }
   };
 
