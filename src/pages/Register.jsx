@@ -78,11 +78,11 @@ export default function Register() {
         setMessage(`⚠️ ${res.data.message}\n\nรหัส OTP ของคุณคือ: ${res.data.otp}\n\nกรุณาใช้รหัสนี้เพื่อยืนยันการสมัครสมาชิก`);
       } else {
         // Email ส่งสำเร็จ
-        setMessage(res.data.message || "📩 ส่ง OTP สำเร็จแล้ว กรุณาตรวจอีเมลของคุณ");
+      setMessage(res.data.message || "📩 ส่ง OTP สำเร็จแล้ว กรุณาตรวจอีเมลของคุณ");
       }
       
       setStep(2);
-      setCountdown(600); // เริ่มนับถอยหลัง 10 นาที (600 วินาที)
+      setCountdown(60); // เริ่มนับถอยหลัง 60 วินาที
     } catch (err) {
       setMessage(err.response?.data?.message || "❌ ไม่สามารถส่ง OTP ได้");
     } finally {
@@ -157,7 +157,7 @@ export default function Register() {
               </p>
             </div>
 
-            {step === 1 && (
+      {step === 1 && (
               <form className="space-y-6">
                 {/* ชื่อ */}
                 <div>
@@ -249,9 +249,9 @@ export default function Register() {
                 </div>
 
                 {/* Send OTP Button */}
-                <button
-                  onClick={handleSendOTP}
-                  disabled={loading}
+          <button
+            onClick={handleSendOTP}
+            disabled={loading}
                   className={`w-full py-3 px-4 rounded-lg font-semibold text-white transition-all duration-200 ${
                     loading 
                       ? "bg-gray-400 cursor-not-allowed" 
@@ -269,11 +269,11 @@ export default function Register() {
                   ) : (
                     "ส่งรหัส OTP"
                   )}
-                </button>
+          </button>
               </form>
-            )}
+      )}
 
-            {step === 2 && (
+      {step === 2 && (
               <div className="space-y-6">
                 {/* OTP Input */}
                 <div>
@@ -298,9 +298,9 @@ export default function Register() {
                 </div>
 
                 {/* Verify OTP Button */}
-                <button
-                  onClick={handleVerifyOTP}
-                  disabled={loading}
+          <button
+            onClick={handleVerifyOTP}
+            disabled={loading}
                   className={`w-full py-3 px-4 rounded-lg font-semibold text-white transition-all duration-200 ${
                     loading 
                       ? "bg-gray-400 cursor-not-allowed" 
@@ -318,29 +318,29 @@ export default function Register() {
                   ) : (
                     "ยืนยัน OTP"
                   )}
-                </button>
+          </button>
 
                 {/* Resend OTP Button */}
-                <button
-                  onClick={handleResendOTP}
-                  disabled={countdown > 0 || loading}
+          <button
+            onClick={handleResendOTP}
+            disabled={countdown > 0 || loading}
                   className={`w-full py-3 px-4 rounded-lg font-medium transition-all duration-200 ${
                     countdown > 0 || loading
-                      ? "bg-gray-100 text-gray-500 cursor-not-allowed"
+                ? "bg-gray-100 text-gray-500 cursor-not-allowed"
                       : "bg-white text-blue-600 border-2 border-blue-500 hover:bg-blue-50 hover:border-blue-600"
-                  }`}
-                >
+            }`}
+          >
                   {countdown > 0 ? `ขอรหัสใหม่ได้ใน ${countdown} วินาที` : "ขอรหัส OTP ใหม่"}
-                </button>
+          </button>
               </div>
-            )}
+      )}
 
             {/* Message */}
-            {message && (
+      {message && (
               <div className={`mt-6 p-4 rounded-lg ${
-                message.startsWith("✅") || message.startsWith("📩")
+            message.startsWith("✅") || message.startsWith("📩")
                   ? "bg-green-50 border border-green-200 text-green-800" 
-                  : message.startsWith("⚠️")
+              : message.startsWith("⚠️")
                   ? "bg-yellow-50 border border-yellow-200 text-yellow-800"
                   : "bg-red-50 border border-red-200 text-red-800"
               }`}>
