@@ -6,10 +6,31 @@ import { validateEmail, escapeHTML, rateLimiter } from "../utils/security.js";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  // ตรวจสอบว่า user ล็อกอินอยู่แล้วหรือไม่
+  React.useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+
+    // ตรวจสอบว่า user ยัง valid อยู่หรือไม่
+    const isValidUser = (user) => {
+      if (!user || !user.role || !user.id || !user.email) return false;
+      
+      // ตรวจสอบว่า user มี role ที่ถูกต้อง
+      const validRoles = ['user', 'staff', 'admin'];
+      if (!validRoles.includes(user.role)) return false;
+      
+      return true;
+    };
+
+    if (isValidUser(storedUser)) {
+      // ถ้า user ล็อกอินอยู่แล้ว → redirect ไป dashboard
+      const redirectPath = `/${storedUser.role}/dashboard`;
+      navigate(redirectPath, { replace: true });
+    }
+  }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -53,12 +74,10 @@ export default function Login() {
       localStorage.removeItem("user");
       sessionStorage.removeItem("user");
 
-      // ✅ เก็บข้อมูลผู้ใช้ตาม rememberMe
-      if (rememberMe) {
-        localStorage.setItem("user", JSON.stringify(user));
-      } else {
-        sessionStorage.setItem("user", JSON.stringify(user));
-      }
+      // ✅ เก็บข้อมูลผู้ใช้ใน localStorage เสมอ (จะอยู่จนกว่าจะลบออกหรือ clear browser data)
+      localStorage.setItem("user", JSON.stringify(user));
+      // ลบจาก sessionStorage เพื่อป้องกันการซ้ำซ้อน
+      sessionStorage.removeItem("user");
 
       setMessage(`✅ เข้าสู่ระบบสำเร็จ! Role: ${user.role}`);
 
@@ -155,20 +174,11 @@ export default function Login() {
                 </div>
               </div>
 
-              {/* Remember Me + Forgot */}
-              <div className="flex items-center justify-between">
-                <label className="flex items-center gap-3 text-sm text-gray-700">
-                  <input
-                    type="checkbox"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                    className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <span className="font-medium">จำฉันไว้</span>
-                </label>
-                {/* <Link to="#" className="text-sm text-blue-600 font-medium hover:text-blue-700 transition-colors">
-                  ลืมรหัสผ่าน?
-                </Link> */}
+              {/* Note: ระบบจะจำการเข้าสู่ระบบของคุณไว้โดยอัตโนมัติ */}
+              <div className="text-center">
+                <p className="text-sm text-gray-600">
+                  💾 ระบบจะจำการเข้าสู่ระบบของคุณไว้โดยอัตโนมัติ
+                </p>
               </div>
 
               {/* Login Button */}

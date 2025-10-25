@@ -23,10 +23,8 @@ import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
 import TermsOfUse from "./pages/TermsOfUse.jsx";
 
 export default function App() {
-  // ตรวจสอบ user จาก localStorage / sessionStorage
-  const user =
-    JSON.parse(localStorage.getItem("user")) ||
-    JSON.parse(sessionStorage.getItem("user"));
+  // ตรวจสอบ user จาก localStorage เป็นหลัก (ระบบจะจำการเข้าสู่ระบบไว้โดยอัตโนมัติ)
+  const user = JSON.parse(localStorage.getItem("user"));
 
   // ถ้า user ยังล็อกอินอยู่ ให้ไป dashboard ของ role ตัวเอง
   const getDashboardPath = () => {

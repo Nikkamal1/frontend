@@ -5,18 +5,26 @@ export default function ProtectedRoute({ allowedRoles = [], children }) {
   let user = null;
 
   try {
-    // อ่านข้อมูลจาก localStorage / sessionStorage
-    user =
-      JSON.parse(localStorage.getItem("user")) ||
-      JSON.parse(sessionStorage.getItem("user"));
+    // อ่านข้อมูลจาก localStorage เป็นหลัก (ระบบจะจำการเข้าสู่ระบบไว้โดยอัตโนมัติ)
+    user = JSON.parse(localStorage.getItem("user"));
   } catch (err) {
     user = null;
   }
 
-  // 1️⃣ ไม่มี user → กลับหน้า login ทันที
-  if (!user || !user.role) {
+  // ตรวจสอบว่า user ยัง valid อยู่หรือไม่
+  const isValidUser = (user) => {
+    if (!user || !user.role || !user.id || !user.email) return false;
+    
+    // ตรวจสอบว่า user มี role ที่ถูกต้อง
+    const validRoles = ['user', 'staff', 'admin'];
+    if (!validRoles.includes(user.role)) return false;
+    
+    return true;
+  };
+
+  // 1️⃣ ไม่มี user หรือ user ไม่ valid → กลับหน้า login ทันที
+  if (!isValidUser(user)) {
     localStorage.removeItem("user");
-    sessionStorage.removeItem("user");
     return <Navigate to="/login" replace />;
   }
 

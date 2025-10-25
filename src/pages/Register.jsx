@@ -78,11 +78,11 @@ export default function Register() {
         setMessage(`⚠️ ${res.data.message}\n\nรหัส OTP ของคุณคือ: ${res.data.otp}\n\nกรุณาใช้รหัสนี้เพื่อยืนยันการสมัครสมาชิก`);
       } else {
         // Email ส่งสำเร็จ
-        setMessage(res.data.message || "✅ ส่ง OTP สำเร็จแล้ว กรุณาตรวจอีเมลของคุณ");
+        setMessage(res.data.message || "📩 ส่ง OTP สำเร็จแล้ว กรุณาตรวจอีเมลของคุณ");
       }
       
       setStep(2);
-      setCountdown(60); // เริ่มนับถอยหลัง 60 วินาที
+      setCountdown(600); // เริ่มนับถอยหลัง 10 นาที (600 วินาที)
     } catch (err) {
       setMessage(err.response?.data?.message || "❌ ไม่สามารถส่ง OTP ได้");
     } finally {
@@ -99,12 +99,16 @@ export default function Register() {
     setLoading(true);
     try {
       const res = await verifyOTP(email, otp);
-      setMessage("✅ ยืนยัน OTP สำเร็จ! สมัครสมาชิกเรียบร้อยแล้ว");
+      setMessage(res.data.message || "✅ ยืนยัน OTP สำเร็จ! สมัครสมาชิกเรียบร้อยแล้ว");
 
-      // เด้งไปหน้า Login หลังสมัครเสร็จ
-      setTimeout(() => {
-        window.location.href = '/login';
-      }, 2000); // รอ 2 วินาทีให้ user อ่านข้อความ
+      // Reset form หลังสมัครเสร็จ
+      setStep(1);
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPassword("");
+      setOtp("");
+      setCountdown(0);
     } catch (err) {
       setMessage(err.response?.data?.message || "❌ รหัส OTP ไม่ถูกต้องหรือหมดอายุ");
     } finally {
@@ -148,7 +152,7 @@ export default function Register() {
                     </Link>
                   </>
                 ) : (
-                  `กรุณากรอกรหัส OTP ที่ส่งไปยัง ${email} (ใช้ได้ 5 นาที, ขอใหม่ได้ใน 60 วินาที)`
+                  `กรุณากรอกรหัส OTP ที่ส่งไปยัง ${email} (ใช้ได้ 15 นาที, ขอใหม่ได้ใน 10 นาที)`
                 )}
               </p>
             </div>
@@ -334,7 +338,7 @@ export default function Register() {
             {/* Message */}
             {message && (
               <div className={`mt-6 p-4 rounded-lg ${
-                message.startsWith("✅")
+                message.startsWith("✅") || message.startsWith("📩")
                   ? "bg-green-50 border border-green-200 text-green-800" 
                   : message.startsWith("⚠️")
                   ? "bg-yellow-50 border border-yellow-200 text-yellow-800"
@@ -344,6 +348,10 @@ export default function Register() {
                   {message.startsWith("✅") ? (
                     <svg className="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  ) : message.startsWith("📩") ? (
+                    <svg className="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                   ) : message.startsWith("⚠️") ? (
                     <svg className="h-5 w-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
