@@ -57,22 +57,15 @@ export default function UserDashboard() {
     return aptDate === today;
   });
 
-  const formatThaiDateTime = (dateTimeStr) => {
-  const [datePart, timePart] = dateTimeStr.split(" ");
-  const [day, month, year] = datePart.split("/");
+  const date = new Date(appointment.appointment_date);
 
-  const monthsTH = [
-    "", "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.",
-    "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."
-  ];
+const formattedDate = date.toLocaleDateString('th-TH', {
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric'
+});
 
-  return {
-    date: `🗓 ${parseInt(day)} ${monthsTH[parseInt(month)]} ${year}`,
-    time: `⏰ ${timePart.substring(0, 5)} น.`
-  };
-};
-const formatted = formatThaiDateTime(appointment.appointment_time);
-
+const formattedTime = appointment.appointment_time.substring(0, 5);
 
   if (loading) {
     return (
@@ -185,8 +178,8 @@ const formatted = formatThaiDateTime(appointment.appointment_time);
                     </div>
                     <div>
                       <p className="font-semibold text-gray-800">{appointment.hospital}</p>
-<p className="text-sm text-gray-600">{formatted.date}</p>
-<p className="text-sm text-gray-600">{formatted.time}</p>                    </div>
+                      <p className="text-sm text-gray-600">{appointment.appointment_time}</p>
+                    </div>
                   </div>
                   <span className={`px-3 py-1 rounded-full text-sm font-medium ${
                     appointment.status === "อนุมัติแล้ว" ? "bg-green-100 text-green-800" :
@@ -235,8 +228,11 @@ const formatted = formatThaiDateTime(appointment.appointment_time);
                       <div>
                         <p className="font-semibold text-gray-800">{appointment.hospital}</p>
                         <p className="text-sm text-gray-600">
-                          {new Date(appointment.appointment_date).toLocaleDateString('th-TH')} • {appointment.appointment_time}
-                        </p>
+  🗓 {formattedDate}
+</p>
+<p className="text-sm text-gray-600">
+  ⏰ {formattedTime} น.
+</p>
                       </div>
                     </div>
                     <span className={`px-3 py-1 rounded-full text-sm font-medium ${
