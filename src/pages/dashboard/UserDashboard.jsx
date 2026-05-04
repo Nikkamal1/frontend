@@ -57,15 +57,7 @@ export default function UserDashboard() {
     return aptDate === today;
   });
 
-  const date = new Date(appointment.appointment_date);
-
-const formattedDate = date.toLocaleDateString('th-TH', {
-  day: 'numeric',
-  month: 'short',
-  year: 'numeric'
-});
-
-const formattedTime = appointment.appointment_time.substring(0, 5);
+  
 
   if (loading) {
     return (
@@ -228,11 +220,8 @@ const formattedTime = appointment.appointment_time.substring(0, 5);
                       <div>
                         <p className="font-semibold text-gray-800">{appointment.hospital}</p>
                         <p className="text-sm text-gray-600">
-  🗓 {formattedDate}
-</p>
-<p className="text-sm text-gray-600">
-  ⏰ {formattedTime} น.
-</p>
+                          {new Date(appointment.appointment_date).toLocaleDateString('th-TH')} • {appointment.appointment_time}
+                        </p>
                       </div>
                     </div>
                     <span className={`px-3 py-1 rounded-full text-sm font-medium ${
