@@ -173,7 +173,7 @@ const LineConnection = ({ userId }) => {
           <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
             <FiCheck className="text-green-500 text-xl" />
             <div>
-              <p className="text-green-800 font-medium">เชื่อมต่อ LINE แล้ว</p>
+              <p className="text-green-800 font-medium">เชื่อมแจ้งเตือนผ่าน LINE แล้ว</p>
               {profile && (
                 <div className="flex items-center gap-2 mt-1">
                   {profile.pictureUrl && (
@@ -250,7 +250,7 @@ const LineConnection = ({ userId }) => {
         </p>
         <ul className="text-gray-600 text-xs mt-1 ml-4 list-disc">
           <li>การจองได้รับการอนุมัติ</li>
-          <li>การจองถูกปฏิเสธ</li>
+          {/* <li>การจองถูกปฏิเสธ</li> */}
           <li>การจองถูกยกเลิก</li>
         </ul>
       </div>

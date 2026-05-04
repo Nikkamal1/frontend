@@ -95,7 +95,7 @@ export default function UserDashboard() {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {/* Total Appointments */}
-          <div className="bg-white rounded-2xl shadow-xl p-6 border-l-4 border-l-blue-500">
+          {/* <div className="bg-white rounded-2xl shadow-xl p-6 border-l-4 border-l-blue-500">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">การจองทั้งหมด</p>
@@ -105,7 +105,7 @@ export default function UserDashboard() {
                 <FiCalendar className="w-6 h-6 text-blue-600" />
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Pending Appointments */}
           <div className="bg-white rounded-2xl shadow-xl p-6 border-l-4 border-l-yellow-500">
@@ -252,7 +252,7 @@ export default function UserDashboard() {
             </h2>
             
             {/* System Status */}
-            <div className="mb-6">
+            {/* <div className="mb-6">
               <div className="flex items-center justify-between p-4 bg-green-50 rounded-xl border border-green-200">
                 <div className="flex items-center">
                   <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
@@ -267,7 +267,7 @@ export default function UserDashboard() {
                   </svg>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Tips */}
             <div className="space-y-4">
