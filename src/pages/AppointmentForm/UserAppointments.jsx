@@ -474,16 +474,10 @@ export default function UserAppointments() {
                   แผนที่ตำแหน่ง
                 </h4>
                 <div className="rounded-lg overflow-hidden shadow-md">
-                <iframe
-                  src={getMapEmbedUrl(selectedAppointment)}
-                  width="100%"
-                    height="300"
-                  style={{ border: 0 }}
-                  allowFullScreen=""
-                  loading="lazy"
-                    title="แผนที่ตำแหน่ง"
-                    className="w-full"
-                ></iframe>
+                <MapContainer center={[lat, lng]} zoom={15} style={{ height: "300px" }}>
+  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+  <Marker position={[lat, lng]} />
+</MapContainer>
               </div>
             </div>
             </div>
