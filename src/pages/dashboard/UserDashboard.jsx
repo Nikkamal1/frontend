@@ -57,6 +57,23 @@ export default function UserDashboard() {
     return aptDate === today;
   });
 
+  const formatThaiDateTime = (dateTimeStr) => {
+  const [datePart, timePart] = dateTimeStr.split(" ");
+  const [day, month, year] = datePart.split("/");
+
+  const monthsTH = [
+    "", "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.",
+    "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."
+  ];
+
+  return {
+    date: `🗓 ${parseInt(day)} ${monthsTH[parseInt(month)]} ${year}`,
+    time: `⏰ ${timePart.substring(0, 5)} น.`
+  };
+};
+const formatted = formatThaiDateTime(appointment.appointment_time);
+
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center">
@@ -80,7 +97,7 @@ export default function UserDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-800 mb-2">
-                สวัสดี, {user?.name || "ผู้ใช้งาน"}
+                สวัสดี {user?.name || "ผู้ใช้งาน"}
               </h1>
               <p className="text-lg text-gray-600">ยินดีต้อนรับสู่ระบบจองรถรับ-ส่งโรงพยาบาล</p>
             </div>
@@ -168,8 +185,8 @@ export default function UserDashboard() {
                     </div>
                     <div>
                       <p className="font-semibold text-gray-800">{appointment.hospital}</p>
-                      <p className="text-sm text-gray-600">{appointment.appointment_time}</p>
-                    </div>
+<p className="text-sm text-gray-600">{formatted.date}</p>
+<p className="text-sm text-gray-600">{formatted.time}</p>                    </div>
                   </div>
                   <span className={`px-3 py-1 rounded-full text-sm font-medium ${
                     appointment.status === "อนุมัติแล้ว" ? "bg-green-100 text-green-800" :
