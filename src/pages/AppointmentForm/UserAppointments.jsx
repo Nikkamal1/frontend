@@ -10,14 +10,12 @@ export default function UserAppointments() {
   const [itemsPerPage] = useState(10);
   const navigate = useNavigate();
 
-  // ✅ โหลดข้อมูลผู้ใช้จาก localStorage หรือ sessionStorage
   useEffect(() => {
     const userData =
       JSON.parse(localStorage.getItem("user")) ||
       JSON.parse(sessionStorage.getItem("user"));
 
     if (!userData || !userData.id) {
-      // 🔒 ถ้าไม่มี user → กลับไปหน้า login
       navigate("/login", { replace: true });
       return;
     }
@@ -25,7 +23,6 @@ export default function UserAppointments() {
     setUserId(userData.id);
   }, [navigate]);
 
-  // ✅ ดึงข้อมูลการจองหลังจากรู้ userId แล้ว
   useEffect(() => {
     if (userId) fetchAppointments();
   }, [userId]);
@@ -34,8 +31,7 @@ export default function UserAppointments() {
     try {
       const res = await getUserAppointments(userId);
       setAppointments(res.data);
-    } catch (err) {
-    }
+    } catch (err) {}
   };
 
   const handleView = (appointment) => setSelectedAppointment(appointment);
@@ -50,13 +46,11 @@ export default function UserAppointments() {
 
   const closeModal = () => setSelectedAppointment(null);
 
-  // คำนวณการแบ่งหน้า
   const totalPages = Math.ceil(appointments.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentAppointments = appointments.slice(startIndex, endIndex);
 
-  // เปลี่ยนหน้า
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -73,10 +67,13 @@ export default function UserAppointments() {
 
   const getMapEmbedUrl = (appointment) => {
     if (appointment.latitude && appointment.longitude) {
-      return `https://www.google.com/maps?q=${appointment.latitude},${appointment.longitude}&z=15&output=embed`;
+      const lat = appointment.latitude;
+      const lng = appointment.longitude;
+      const delta = 0.01;
+      return `https://www.openstreetmap.org/export/embed.html?bbox=${lng - delta},${lat - delta},${lng + delta},${lat + delta}&layer=mapnik&marker=${lat},${lng}`;
     } else {
-      const q = encodeURIComponent(appointment.hospital || "โรงพยาบาลใกล้ฉัน");
-      return `https://www.google.com/maps?q=${q}&z=15&output=embed`;
+      const q = encodeURIComponent(appointment.hospital || "โรงพยาบาล");
+      return `https://www.openstreetmap.org/export/embed.html?query=${q}&layer=mapnik`;
     }
   };
 
@@ -103,7 +100,7 @@ export default function UserAppointments() {
 
         {/* Main Content Card */}
         <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
-      {appointments.length === 0 ? (
+          {appointments.length === 0 ? (
             <div className="text-center py-12">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
                 <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -124,7 +121,7 @@ export default function UserAppointments() {
               {/* Desktop Table View */}
               <div className="hidden lg:block overflow-x-auto">
                 <table className="min-w-full">
-            <thead>
+                  <thead>
                     <tr className="bg-gradient-to-r from-blue-50 to-green-50">
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700 border-b-2 border-gray-200">ชื่อ-นามสกุล</th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700 border-b-2 border-gray-200">โรงพยาบาล</th>
@@ -132,10 +129,10 @@ export default function UserAppointments() {
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700 border-b-2 border-gray-200">เวลา</th>
                       <th className="px-6 py-4 text-center text-sm font-semibold text-gray-700 border-b-2 border-gray-200">สถานะ</th>
                       <th className="px-6 py-4 text-center text-sm font-semibold text-gray-700 border-b-2 border-gray-200 w-48">การจัดการ</th>
-              </tr>
-            </thead>
+                    </tr>
+                  </thead>
                   <tbody className="divide-y divide-gray-200">
-              {currentAppointments.map((a) => (
+                    {currentAppointments.map((a) => (
                       <tr key={a.id} className="hover:bg-gray-50 transition-colors duration-200">
                         <td className="px-6 py-4 text-sm text-gray-900">
                           <div className="flex items-center">
@@ -144,7 +141,7 @@ export default function UserAppointments() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                               </svg>
                             </div>
-                    {a.first_name} {a.last_name}
+                            {a.first_name} {a.last_name}
                           </div>
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">
@@ -170,17 +167,17 @@ export default function UserAppointments() {
                             </svg>
                             {a.appointment_time}
                           </div>
-                  </td>
+                        </td>
                         <td className="px-6 py-4 text-center">
-                    <span
+                          <span
                             className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                        a.status === "รอการอนุมัติ"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : a.status === "อนุมัติแล้ว"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
+                              a.status === "รอการอนุมัติ"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : a.status === "อนุมัติแล้ว"
+                                ? "bg-green-100 text-green-800"
+                                : "bg-red-100 text-red-800"
+                            }`}
+                          >
                             {a.status === "รอการอนุมัติ" && (
                               <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
@@ -196,13 +193,13 @@ export default function UserAppointments() {
                                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                               </svg>
                             )}
-                      {a.status}
-                    </span>
-                  </td>
+                            {a.status}
+                          </span>
+                        </td>
                         <td className="px-6 py-4 text-center">
                           <div className="flex justify-center gap-2">
-                    <button
-                      onClick={() => handleView(a)}
+                            <button
+                              onClick={() => handleView(a)}
                               className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
                             >
                               <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -210,28 +207,28 @@ export default function UserAppointments() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                               </svg>
                               ดู
-                    </button>
-                    <button
-                      onClick={() => handleEdit(a)}
+                            </button>
+                            <button
+                              onClick={() => handleEdit(a)}
                               className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 ${
-                        a.status === "รอการอนุมัติ"
+                                a.status === "รอการอนุมัติ"
                                   ? "bg-green-600 hover:bg-green-700 text-white"
-                          : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                      }`}
-                      disabled={a.status !== "รอการอนุมัติ"}
-                    >
+                                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                              }`}
+                              disabled={a.status !== "รอการอนุมัติ"}
+                            >
                               <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                               </svg>
-                      แก้ไข
-                    </button>
+                              แก้ไข
+                            </button>
                           </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
 
               {/* Mobile Card View */}
               <div className="lg:hidden space-y-4">
@@ -261,7 +258,7 @@ export default function UserAppointments() {
                         {a.status}
                       </span>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
                       <div className="flex items-center text-gray-600">
                         <svg className="w-4 h-4 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -276,7 +273,7 @@ export default function UserAppointments() {
                         {a.appointment_time}
                       </div>
                     </div>
-                    
+
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleView(a)}
@@ -321,6 +318,7 @@ export default function UserAppointments() {
       {selectedAppointment && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+
             {/* Modal Header */}
             <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-t-2xl">
               <div className="flex items-center justify-between">
@@ -335,19 +333,20 @@ export default function UserAppointments() {
                     <p className="text-blue-100 text-sm">ข้อมูลการจองรถรับ-ส่ง</p>
                   </div>
                 </div>
-            <button
-              onClick={closeModal}
+                <button
+                  onClick={closeModal}
                   className="w-8 h-8 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full flex items-center justify-center transition-all duration-200"
-            >
+                >
                   <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
-            </button>
+                </button>
               </div>
             </div>
 
             {/* Modal Content */}
             <div className="p-6">
+
               {/* Status Badge */}
               <div className="mb-6 text-center">
                 <span
@@ -474,18 +473,47 @@ export default function UserAppointments() {
                   แผนที่ตำแหน่ง
                 </h4>
                 <div className="rounded-lg overflow-hidden shadow-md">
-                <iframe
-                  src={getMapEmbedUrl(selectedAppointment)}
-                  width="100%"
+                  <iframe
+                    src={getMapEmbedUrl(selectedAppointment)}
+                    width="100%"
                     height="300"
-                  style={{ border: 0 }}
-                  allowFullScreen=""
-                  loading="lazy"
+                    style={{ border: 0 }}
+                    allowFullScreen=""
+                    loading="lazy"
                     title="แผนที่ตำแหน่ง"
                     className="w-full"
-                ></iframe>
+                  ></iframe>
+                </div>
+                <div className="mt-2 flex gap-3">
+                  {selectedAppointment.latitude && selectedAppointment.longitude && (
+                    <>
+                      <a
+                        href={`https://www.openstreetmap.org/?mlat=${selectedAppointment.latitude}&mlon=${selectedAppointment.longitude}&zoom=15`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center text-sm text-blue-600 hover:underline"
+                      >
+                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        เปิดใน OpenStreetMap
+                      </a>
+                      <a
+                        href={`https://www.google.com/maps?q=${selectedAppointment.latitude},${selectedAppointment.longitude}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center text-sm text-green-600 hover:underline"
+                      >
+                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        เปิดใน Google Maps
+                      </a>
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
+
             </div>
 
             {/* Modal Footer */}
@@ -497,6 +525,7 @@ export default function UserAppointments() {
                 ปิด
               </button>
             </div>
+
           </div>
         </div>
       )}
@@ -514,7 +543,7 @@ export default function UserAppointments() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            
+
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
               <button
                 key={page}
@@ -528,7 +557,7 @@ export default function UserAppointments() {
                 {page}
               </button>
             ))}
-            
+
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
