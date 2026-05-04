@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getAllAppointments } from "../../services/api";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
+import { Leaf } from "lucide-react";
 
 export default function StaffAppointments() {
   const navigate = useNavigate();
@@ -119,6 +120,61 @@ export default function StaffAppointments() {
       return `https://www.google.com/maps?q=${q}&z=15&output=embed`;
     }
   };
+
+  function LeafletMap({ lat, lng }) {
+    const mapRef = useRef(null);
+    const mapInstanceRef = useRef(null);
+  
+    useEffect(() => {
+      if (!document.getElementById("leaflet-css")) {
+        const link = document.createElement("link");
+        link.id = "leaflet-css";
+        link.rel = "stylesheet";
+        link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+        document.head.appendChild(link);
+      }
+  
+      import("leaflet").then((L) => {
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.remove();
+          mapInstanceRef.current = null;
+        }
+  
+        if (mapRef.current) {
+          const map = L.map(mapRef.current).setView([lat, lng], 15);
+  
+          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: "&copy; OpenStreetMap contributors",
+          }).addTo(map);
+  
+          const icon = L.icon({
+            iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+            shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+          });
+  
+          L.marker([lat, lng], { icon }).addTo(map);
+  
+          mapInstanceRef.current = map;
+        }
+      });
+  
+      return () => {
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.remove();
+          mapInstanceRef.current = null;
+        }
+      };
+    }, [lat, lng]);
+  
+    return (
+      <div
+        ref={mapRef}
+        style={{ height: "300px", width: "100%", borderRadius: "8px", zIndex: 0 }}
+      />
+    );
+  }
 
   if (loading) {
     return (
@@ -577,20 +633,18 @@ export default function StaffAppointments() {
                       ตำแหน่ง
                     </h3>
                     
-                    {/* Google Maps Embed */}
-                    <div className="mb-4">
-                      <iframe
-                        src={getMapEmbedUrl(selectedAppointment)}
-                        width="100%"
-                        height="300"
-                        style={{ border: 0 }}
-                        allowFullScreen=""
-                        loading="lazy"
-                        title="แผนที่ตำแหน่ง"
-                        className="w-full rounded-lg shadow-lg"
-                      ></iframe>
-                    </div>
-
+                   {selectedAppointment.latitude && selectedAppointment.longitude ? (
+                      <div>
+                        <div className="rounded-lg overflow-hidden shadow-md mb-2">
+                          <LeafletMap
+                            lat={selectedAppointment.latitude}
+                        lng={selectedAppointment.longitude}
+                      />  
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-500">ไม่มีข้อมูลตำแหน่ง</p>
+                    )}
                     {/* Coordinate Info */}
                     <div className="text-sm text-gray-600 mb-4">
                       <p><strong>ละติจูด:</strong> {selectedAppointment.latitude}</p>
