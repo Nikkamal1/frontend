@@ -1,6 +1,61 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { getUserAppointments } from "../../services/api";
 import { useNavigate } from "react-router-dom";
+
+function LeafletMap({ lat, lng }) {
+  const mapRef = useRef(null);
+  const mapInstanceRef = useRef(null);
+
+  useEffect(() => {
+    if (!document.getElementById("leaflet-css")) {
+      const link = document.createElement("link");
+      link.id = "leaflet-css";
+      link.rel = "stylesheet";
+      link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+      document.head.appendChild(link);
+    }
+
+    import("leaflet").then((L) => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+
+      if (mapRef.current) {
+        const map = L.map(mapRef.current).setView([lat, lng], 15);
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: "&copy; OpenStreetMap contributors",
+        }).addTo(map);
+
+        const icon = L.icon({
+          iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+          shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+        });
+
+        L.marker([lat, lng], { icon }).addTo(map);
+
+        mapInstanceRef.current = map;
+      }
+    });
+
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, [lat, lng]);
+
+  return (
+    <div
+      ref={mapRef}
+      style={{ height: "300px", width: "100%", borderRadius: "8px", zIndex: 0 }}
+    />
+  );
+}
 
 export default function UserAppointments() {
   const [appointments, setAppointments] = useState([]);
@@ -63,20 +118,6 @@ export default function UserAppointments() {
       month: "long",
       day: "numeric",
     });
-  };
-
-  const getStaticMapUrl = (appointment) => {
-    if (appointment.latitude && appointment.longitude) {
-      const lat = appointment.latitude;
-      const lng = appointment.longitude;
-      return (
-        "https://staticmap.openstreetmap.de/staticmap.php?center=" +
-        lat + "," + lng +
-        "&zoom=15&size=600x300&markers=" +
-        lat + "," + lng + ",red-pushpin"
-      );
-    }
-    return null;
   };
 
   if (!userId)
@@ -478,10 +519,9 @@ export default function UserAppointments() {
                 {selectedAppointment.latitude && selectedAppointment.longitude ? (
                   <div>
                     <div className="rounded-lg overflow-hidden shadow-md mb-2">
-                      <img
-                        src={getStaticMapUrl(selectedAppointment)}
-                        alt="แผนที่ตำแหน่ง"
-                        className="w-full h-64 object-cover"
+                      <LeafletMap
+                        lat={selectedAppointment.latitude}
+                        lng={selectedAppointment.longitude}
                       />
                     </div>
                     <div className="flex gap-3 mt-2">
