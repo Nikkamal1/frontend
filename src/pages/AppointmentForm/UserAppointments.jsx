@@ -615,10 +615,7 @@ export default function UserAppointments() {
         </div>
       )}
 
-      <div className="text-center mt-8 text-gray-600">
-        <p className="text-sm">ดูรายการจองของคุณได้อย่างสะดวกและปลอดภัย</p>
-        <p className="text-xs mt-1">ข้อมูลจะได้รับการอัปเดตทันที</p>
-      </div>
+
     </div>
   );
 }
