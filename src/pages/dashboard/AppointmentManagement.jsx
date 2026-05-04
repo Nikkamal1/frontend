@@ -53,7 +53,7 @@ export default function AppointmentManagement() {
       'รอการอนุมัติ': { color: 'bg-yellow-100 text-yellow-800', icon: '⏳' },
       'อนุมัติแล้ว': { color: 'bg-green-100 text-green-800', icon: '✅' },
       'ยกเลิกการจอง': { color: 'bg-red-100 text-red-800', icon: '❌' },
-      'ปฏิเสธ': { color: 'bg-red-100 text-red-800', icon: '❌' }
+      // 'ปฏิเสธ': { color: 'bg-red-100 text-red-800', icon: '❌' }
     };
     
     const config = statusConfig[status] || { color: 'bg-gray-100 text-gray-800', icon: '❓' };
@@ -93,7 +93,7 @@ export default function AppointmentManagement() {
             <select id="newStatus" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent">
               <option value="รอการอนุมัติ" ${appointment.status === 'รอการอนุมัติ' ? 'selected' : ''}>รอการอนุมัติ</option>
               <option value="อนุมัติแล้ว" ${appointment.status === 'อนุมัติแล้ว' ? 'selected' : ''}>อนุมัติแล้ว</option>
-              <option value="ปฏิเสธ" ${appointment.status === 'ปฏิเสธ' ? 'selected' : ''}>ปฏิเสธ</option>
+              <!-- <option value="ปฏิเสธ" ${appointment.status === 'ปฏิเสธ' ? 'selected' : ''}>ปฏิเสธ</option> -->
               <option value="ยกเลิกการจอง" ${appointment.status === 'ยกเลิกการจอง' ? 'selected' : ''}>ยกเลิกการจอง</option>
             </select>
           </div>

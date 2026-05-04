@@ -97,99 +97,486 @@ export default function AdminDashboard({ user, onLogout }) {
     }
   };
 
-  const generateReport = async () => {
-    const periodText = {
-      week: "รายสัปดาห์",
-      month: "รายเดือน", 
-      year: "รายปี"
-    };
-
-    Swal.fire({
-      title: `รายงาน${periodText[reportPeriod]}`,
-      html: `
-        <div class="text-left space-y-3">
-          <div class="bg-blue-50 p-3 rounded-lg">
-            <h4 class="font-semibold text-blue-800">สถิติการจอง</h4>
-            <p>การจองทั้งหมด: ${stats.totalAppointments} รายการ</p>
-            <p>รอการอนุมัติ: ${stats.pendingAppointments} รายการ</p>
-            <p>อนุมัติแล้ว: ${stats.approvedAppointments} รายการ</p>
-            <p>ปฏิเสธ/ยกเลิก: ${stats.rejectedAppointments} รายการ</p>
-          </div>
-          <div class="bg-green-50 p-3 rounded-lg">
-            <h4 class="font-semibold text-green-800">สถิติผู้ใช้</h4>
-            <p>ผู้ใช้ทั้งหมด: ${stats.totalUsers} คน</p>
-            <p>ผู้ใช้ทั่วไป: ${stats.regularUsers} คน</p>
-            <p>เจ้าหน้าที่: ${stats.staffUsers} คน</p>
-            <p>แอดมิน: ${stats.adminUsers} คน</p>
-          </div>
-          <div class="bg-purple-50 p-3 rounded-lg">
-            <h4 class="font-semibold text-purple-800">สถิติตามช่วงเวลา</h4>
-            <p>วันนี้: ${stats.todayAppointments} รายการ</p>
-            <p>สัปดาห์นี้: ${stats.thisWeekAppointments} รายการ</p>
-            <p>เดือนนี้: ${stats.thisMonthAppointments} รายการ</p>
-          </div>
-        </div>
-      `,
-      showCancelButton: true,
-      confirmButtonText: "ดาวน์โหลด PDF",
-      cancelButtonText: "ปิด",
-      confirmButtonColor: "#3B82F6",
-      cancelButtonColor: "#6B7280"
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          // แสดง loading
-          Swal.fire({
-            title: "กำลังสร้างรายงาน PDF",
-            text: "กรุณารอสักครู่...",
-            allowOutsideClick: false,
-            showConfirmButton: false,
-            didOpen: () => {
-              Swal.showLoading();
-            }
-          });
-
-          // ดาวน์โหลด PDF
-          const response = await downloadPDFReport(reportPeriod);
-          
-          // สร้าง blob และดาวน์โหลด
-          const blob = new Blob([response.data], { type: 'application/pdf' });
-          const url = window.URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          
-          const periodText = {
-            week: "รายสัปดาห์",
-            month: "รายเดือน", 
-            year: "รายปี"
-          };
-          
-          link.download = `รายงานระบบ_${periodText[reportPeriod]}_${new Date().toISOString().split('T')[0]}.pdf`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          window.URL.revokeObjectURL(url);
-
-          // แสดงข้อความสำเร็จ
-          Swal.fire({
-            icon: "success",
-            title: "ดาวน์โหลดสำเร็จ",
-            text: "รายงาน PDF ถูกดาวน์โหลดเรียบร้อยแล้ว",
-            confirmButtonText: "ตกลง"
-          });
-
-        } catch (error) {
-          Swal.fire({
-            icon: "error",
-            title: "เกิดข้อผิดพลาด",
-            text: "ไม่สามารถดาวน์โหลดรายงาน PDF ได้",
-            confirmButtonText: "ตกลง"
-          });
-        }
-      }
-    });
+const generateReport = async () => {
+  const periodText = {
+    week: "รายสัปดาห์",
+    month: "รายเดือน",
+    year: "รายปี",
   };
 
+  const result = await Swal.fire({
+    title: `รายงาน${periodText[reportPeriod]}`,
+    html: `
+      <div class="text-left space-y-3">
+        <div class="bg-blue-50 p-3 rounded-lg">
+          <h4 class="font-semibold text-blue-800">สถิติการจอง</h4>
+          <p>การจองทั้งหมด: ${stats.totalAppointments} รายการ</p>
+          <p>รอการอนุมัติ: ${stats.pendingAppointments} รายการ</p>
+          <p>อนุมัติแล้ว: ${stats.approvedAppointments} รายการ</p>
+          <p>ปฏิเสธ/ยกเลิก: ${stats.rejectedAppointments} รายการ</p>
+        </div>
+        <div class="bg-green-50 p-3 rounded-lg">
+          <h4 class="font-semibold text-green-800">สถิติผู้ใช้</h4>
+          <p>ผู้ใช้ทั้งหมด: ${stats.totalUsers} คน</p>
+          <p>ผู้ใช้ทั่วไป: ${stats.regularUsers} คน</p>
+          <p>เจ้าหน้าที่: ${stats.staffUsers} คน</p>
+          <p>แอดมิน: ${stats.adminUsers} คน</p>
+        </div>
+        <div class="bg-purple-50 p-3 rounded-lg">
+          <h4 class="font-semibold text-purple-800">สถิติตามช่วงเวลา</h4>
+          <p>วันนี้: ${stats.todayAppointments} รายการ</p>
+          <p>สัปดาห์นี้: ${stats.thisWeekAppointments} รายการ</p>
+          <p>เดือนนี้: ${stats.thisMonthAppointments} รายการ</p>
+        </div>
+      </div>
+    `,
+    showCancelButton: true,
+    confirmButtonText: "ดาวน์โหลด PDF",
+    cancelButtonText: "ปิด",
+    confirmButtonColor: "#3B82F6",
+    cancelButtonColor: "#6B7280",
+  });
+
+  if (result.isConfirmed) {
+    generateThaiPDF(periodText[reportPeriod]);
+  }
+};
+
+// ✅ ฟังก์ชันใหม่: สร้าง PDF ภาษาไทยด้วย Browser Print
+const generateThaiPDF = (periodLabel) => {
+  const now = new Date();
+  const thaiYear = now.getFullYear() + 543;
+  const monthNames = [
+    "มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน",
+    "กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"
+  ];
+  const dateStr = `${now.getDate()} ${monthNames[now.getMonth()]} พ.ศ. ${thaiYear}`;
+  const docNumber = `รพ. ${String(now.getMonth() + 1).padStart(2, "0")}${thaiYear}/`;
+
+  // คำนวณสถิติ
+  const totalServed    = stats.approvedAppointments;
+  const approvalRate   = stats.totalAppointments > 0
+    ? ((stats.approvedAppointments / stats.totalAppointments) * 100).toFixed(2)
+    : "0.00";
+  const cancelRate     = stats.totalAppointments > 0
+    ? ((stats.rejectedAppointments / stats.totalAppointments) * 100).toFixed(2)
+    : "0.00";
+  const pendingRate    = stats.totalAppointments > 0
+    ? ((stats.pendingAppointments / stats.totalAppointments) * 100).toFixed(2)
+    : "0.00";
+  const userRate       = stats.totalUsers > 0
+    ? ((stats.regularUsers / stats.totalUsers) * 100).toFixed(2)
+    : "0.00";
+  const staffRate      = stats.totalUsers > 0
+    ? ((stats.staffUsers / stats.totalUsers) * 100).toFixed(2)
+    : "0.00";
+  const adminRate      = stats.totalUsers > 0
+    ? ((stats.adminUsers / stats.totalUsers) * 100).toFixed(2)
+    : "0.00";
+
+  const htmlContent = `
+  <!DOCTYPE html>
+  <html lang="th">
+  <head>
+    <meta charset="UTF-8"/>
+    <title>รายงานสรุปผลการให้บริการ</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap');
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      body {
+        font-family: 'Sarabun', 'TH Sarabun New', 'Angsana New', serif;
+        font-size: 16pt;
+        color: #000;
+        background: #fff;
+        padding: 40px 60px;
+        line-height: 1.8;
+      }
+
+      /* ===== หัวกระดาษราชการ ===== */
+      .gov-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 6px;
+      }
+      .gov-seal {
+        width: 80px;
+        height: 80px;
+        border: 3px double #1a3a5c;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 9pt;
+        color: #1a3a5c;
+        text-align: center;
+        font-weight: 700;
+        padding: 6px;
+        flex-shrink: 0;
+      }
+      .gov-title-block { text-align: center; }
+      .gov-ministry {
+        font-size: 13pt;
+        font-weight: 700;
+        color: #1a3a5c;
+      }
+      .gov-dept {
+        font-size: 12pt;
+        color: #1a3a5c;
+      }
+      .gov-division {
+        font-size: 11pt;
+        color: #374151;
+      }
+
+      /* ===== เส้นคั่นหัว ===== */
+      .header-line {
+        border: none;
+        border-top: 4px double #1a3a5c;
+        margin: 10px 0 4px;
+      }
+      .header-line-thin {
+        border: none;
+        border-top: 1px solid #1a3a5c;
+        margin: 2px 0 16px;
+      }
+
+      /* ===== ชื่อเรื่องเอกสาร ===== */
+      .doc-title {
+        text-align: center;
+        font-size: 18pt;
+        font-weight: 700;
+        color: #000;
+        margin: 12px 0 4px;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+      }
+      .doc-subtitle {
+        text-align: center;
+        font-size: 14pt;
+        color: #1a3a5c;
+        margin-bottom: 16px;
+      }
+
+      /* ===== เลขที่เอกสาร / วันที่ ===== */
+      .doc-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13pt;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        padding: 8px 14px;
+        background: #f8f9fa;
+        border-radius: 4px;
+      }
+
+      /* ===== หัวข้อหมวด ===== */
+      .section-heading {
+        font-size: 15pt;
+        font-weight: 700;
+        color: #1a3a5c;
+        margin: 20px 0 8px;
+        padding: 6px 12px;
+        background: #e8f0fe;
+        border-left: 5px solid #1a3a5c;
+      }
+
+      /* ===== ข้อความนำ ===== */
+      .intro-text {
+        font-size: 14pt;
+        text-align: justify;
+        text-indent: 2.5em;
+        margin-bottom: 12px;
+        line-height: 2;
+      }
+
+      /* ===== ตาราง ===== */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14pt;
+        margin-bottom: 16px;
+      }
+      thead tr {
+        background: #1a3a5c;
+        color: #fff;
+      }
+      thead th {
+        padding: 10px 14px;
+        text-align: center;
+        font-weight: 700;
+        border: 1px solid #0f2744;
+      }
+      tbody td {
+        padding: 9px 14px;
+        border: 1px solid #9ca3af;
+        vertical-align: middle;
+      }
+      tbody tr:nth-child(even) { background: #f0f4ff; }
+      tbody tr.total-row {
+        background: #dbeafe;
+        font-weight: 700;
+      }
+      .text-center { text-align: center; }
+      .text-right  { text-align: right; }
+
+      /* ===== สรุปตัวเลขสำคัญ ===== */
+      .highlight-box {
+        border: 2px solid #1a3a5c;
+        border-radius: 6px;
+        padding: 12px 18px;
+        margin: 12px 0;
+        background: #f0f4ff;
+      }
+      .highlight-box p {
+        font-size: 14pt;
+        line-height: 2;
+      }
+      .highlight-box strong { color: #1a3a5c; }
+
+      /* ===== ส่วนลงนาม ===== */
+      .signature-section {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 40px;
+      }
+      .signature-block {
+        text-align: center;
+        width: 260px;
+      }
+      .signature-line {
+        border-top: 1px solid #000;
+        margin: 50px 20px 6px;
+      }
+      .signature-name {
+        font-size: 14pt;
+        font-weight: 700;
+      }
+      .signature-role {
+        font-size: 12pt;
+        color: #374151;
+      }
+      .signature-date {
+        font-size: 12pt;
+        color: #374151;
+        margin-top: 4px;
+      }
+
+      /* ===== Footer ===== */
+      .footer {
+        text-align: center;
+        font-size: 10pt;
+        color: #6b7280;
+        border-top: 1px solid #ccc;
+        padding-top: 10px;
+        margin-top: 30px;
+      }
+
+      @media print {
+        body { padding: 15mm 20mm; font-size: 14pt; }
+        @page { margin: 10mm; size: A4; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- ===== หัวกระดาษ ===== -->
+    <div class="gov-header">
+      <div class="gov-seal">ตราสัญลักษณ์<br/>หน่วยงาน</div>
+      <div class="gov-title-block">
+        <div class="gov-ministry">กระทรวงสาธารณสุข</div>
+        <div class="gov-dept">โรงพยาบาล ...</div>
+        <div class="gov-division">งานระบบจองรถรับ-ส่งผู้ป่วย</div>
+      </div>
+    </div>
+
+    <hr class="header-line"/>
+    <hr class="header-line-thin"/>
+
+    <!-- ===== ชื่อเรื่อง ===== -->
+    <div class="doc-title">รายงานสรุปผลการให้บริการระบบจองรถรับ-ส่งผู้ป่วย</div>
+    <div class="doc-subtitle">ประเภทรายงาน: ${periodLabel} &nbsp;|&nbsp; ข้อมูล ณ วันที่ ${dateStr}</div>
+
+    <!-- ===== เลขที่ / วันที่ ===== -->
+    <div class="doc-meta">
+      <span>เลขที่เอกสาร: ${docNumber}</span>
+      <span>วันที่จัดทำ: ${dateStr}</span>
+      <span>จัดทำโดย: ${user?.name || "ผู้ดูแลระบบ"}</span>
+    </div>
+
+    <!-- ===== ๑. บทนำ ===== -->
+    <div class="section-heading">๑. บทนำ</div>
+    <p class="intro-text">
+      รายงานฉบับนี้จัดทำขึ้นเพื่อสรุปผลการดำเนินงานของระบบจองรถรับ-ส่งผู้ป่วย
+      ในรูปแบบ${periodLabel} โดยมีวัตถุประสงค์เพื่อเสนอข้อมูลเชิงสถิติต่อผู้บริหาร
+      และผู้ที่เกี่ยวข้อง เพื่อประกอบการตัดสินใจและพัฒนาการให้บริการให้มีประสิทธิภาพยิ่งขึ้น
+    </p>
+
+    <!-- ===== ๒. สถิติผู้ใช้บริการ ===== -->
+    <div class="section-heading">๒. สถิติผู้ใช้บริการในระบบ</div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:10%">ลำดับ</th>
+          <th style="width:40%">ประเภทผู้ใช้งาน</th>
+          <th style="width:25%">จำนวน (ราย)</th>
+          <th style="width:25%">ร้อยละ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-center">๑</td>
+          <td>ผู้ใช้บริการทั่วไป (ผู้ป่วย/ผู้รับบริการ)</td>
+          <td class="text-center">${stats.regularUsers.toLocaleString()}</td>
+          <td class="text-center">${userRate}</td>
+        </tr>
+        <tr>
+          <td class="text-center">๒</td>
+          <td>เจ้าหน้าที่ผู้ดำเนินการ</td>
+          <td class="text-center">${stats.staffUsers.toLocaleString()}</td>
+          <td class="text-center">${staffRate}</td>
+        </tr>
+        <tr>
+          <td class="text-center">๓</td>
+          <td>ผู้ดูแลระบบ (Administrator)</td>
+          <td class="text-center">${stats.adminUsers.toLocaleString()}</td>
+          <td class="text-center">${adminRate}</td>
+        </tr>
+        <tr class="total-row">
+          <td class="text-center" colspan="2">รวมทั้งสิ้น</td>
+          <td class="text-center">${stats.totalUsers.toLocaleString()} ราย</td>
+          <td class="text-center">๑๐๐.๐๐</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ===== ๓. สถิติการจอง ===== -->
+    <div class="section-heading">๓. สถิติการรับคำขอใช้บริการ (การจอง)</div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:10%">ลำดับ</th>
+          <th style="width:40%">สถานะการจอง</th>
+          <th style="width:25%">จำนวน (รายการ)</th>
+          <th style="width:25%">ร้อยละ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-center">๑</td>
+          <td>รอการพิจารณาอนุมัติ</td>
+          <td class="text-center">${stats.pendingAppointments.toLocaleString()}</td>
+          <td class="text-center">${pendingRate}</td>
+        </tr>
+        <tr>
+          <td class="text-center">๒</td>
+          <td>ได้รับการอนุมัติและให้บริการแล้ว</td>
+          <td class="text-center">${stats.approvedAppointments.toLocaleString()}</td>
+          <td class="text-center">${approvalRate}</td>
+        </tr>
+        <tr>
+          <td class="text-center">๓</td>
+          <td>ปฏิเสธ / ยกเลิกการจอง</td>
+          <td class="text-center">${stats.rejectedAppointments.toLocaleString()}</td>
+          <td class="text-center">${cancelRate}</td>
+        </tr>
+        <tr class="total-row">
+          <td class="text-center" colspan="2">รวมคำขอใช้บริการทั้งสิ้น</td>
+          <td class="text-center">${stats.totalAppointments.toLocaleString()} รายการ</td>
+          <td class="text-center">๑๐๐.๐๐</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ===== ๔. ข้อมูลตามช่วงเวลา ===== -->
+    <div class="section-heading">๔. ปริมาณการจองจำแนกตามช่วงเวลา</div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:10%">ลำดับ</th>
+          <th style="width:50%">ช่วงเวลา</th>
+          <th style="width:40%">จำนวนการจอง (รายการ)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-center">๑</td>
+          <td>วันนี้ (${dateStr})</td>
+          <td class="text-center">${stats.todayAppointments.toLocaleString()}</td>
+        </tr>
+        <tr>
+          <td class="text-center">๒</td>
+          <td>สัปดาห์ปัจจุบัน (สะสม)</td>
+          <td class="text-center">${stats.thisWeekAppointments.toLocaleString()}</td>
+        </tr>
+        <tr>
+          <td class="text-center">๓</td>
+          <td>เดือนปัจจุบัน (สะสม)</td>
+          <td class="text-center">${stats.thisMonthAppointments.toLocaleString()}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ===== ๕. สรุปผล ===== -->
+    <div class="section-heading">๕. สรุปผลและข้อสังเกต</div>
+    <div class="highlight-box">
+      <p>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;จากข้อมูลสถิติ${periodLabel}ที่ผ่านมา ระบบมีผู้ลงทะเบียนใช้งานทั้งสิ้น
+        <strong>${stats.totalUsers.toLocaleString()} ราย</strong>
+        โดยมีคำขอใช้บริการรถรับ-ส่งจำนวนทั้งสิ้น
+        <strong>${stats.totalAppointments.toLocaleString()} รายการ</strong>
+        ในจำนวนนี้ได้รับการอนุมัติและให้บริการแล้ว
+        <strong>${stats.approvedAppointments.toLocaleString()} รายการ</strong>
+        คิดเป็นร้อยละ <strong>${approvalRate}</strong>
+        ของคำขอทั้งหมด มีคำขอที่ยังรอการพิจารณา
+        <strong>${stats.pendingAppointments.toLocaleString()} รายการ</strong>
+        และมีการยกเลิก/ปฏิเสธ
+        <strong>${stats.rejectedAppointments.toLocaleString()} รายการ</strong>
+        คิดเป็นร้อยละ <strong>${cancelRate}</strong>
+      </p>
+    </div>
+
+    <!-- ===== ลงนาม ===== -->
+    <div class="signature-section">
+      <div class="signature-block">
+        <div class="signature-line"></div>
+        <div class="signature-name">(${user?.name || ".................................."})</div>
+        <div class="signature-role">ผู้ดูแลระบบ / ผู้จัดทำรายงาน</div>
+        <div class="signature-date">วันที่ ${dateStr}</div>
+      </div>
+    </div>
+
+    <!-- ===== Footer ===== -->
+    <div class="footer">
+      เอกสารนี้จัดทำโดยระบบสารสนเทศงานจองรถรับ-ส่งผู้ป่วย &nbsp;|&nbsp;
+      พิมพ์เมื่อวันที่ ${dateStr} &nbsp;|&nbsp; หน้า ๑/๑
+    </div>
+
+    <script>
+      document.fonts.ready.then(() => {
+        setTimeout(() => { window.print(); }, 400);
+      });
+    </script>
+  </body>
+  </html>
+  `;
+
+  const printWindow = window.open("", "_blank", "width=900,height=750");
+  if (!printWindow) {
+    Swal.fire({
+      icon: "warning",
+      title: "ถูกบล็อก Pop-up",
+      text: "กรุณาอนุญาต Pop-up ในเบราว์เซอร์แล้วลองใหม่",
+      confirmButtonText: "ตกลง",
+    });
+    return;
+  }
+  printWindow.document.write(htmlContent);
+  printWindow.document.close();
+};
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center">
