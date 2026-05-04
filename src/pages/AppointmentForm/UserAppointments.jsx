@@ -65,8 +65,7 @@ export default function UserAppointments() {
     if (appointment.latitude && appointment.longitude) {
       const lat = appointment.latitude;
       const lng = appointment.longitude;
-      return `https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lng}&zoom=15&size=600x300&markers=${lat},${lng},red-pushpin`;
-    }
+return `https://static-maps.your-server.com/?center=${lat},${lng}&zoom=15&size=600x300&markers=${lat},${lng}`;    }
     return null;
   };
 
