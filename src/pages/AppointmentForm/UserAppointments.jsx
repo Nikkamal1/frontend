@@ -524,7 +524,7 @@ export default function UserAppointments() {
                         lng={selectedAppointment.longitude}
                       />
                     </div>
-                    <div className="flex gap-3 mt-2">
+                    <div className="flex flex-col sm:flex-row gap-3">
                       <a
                         href={"https://www.openstreetmap.org/?mlat=" + selectedAppointment.latitude + "&mlon=" + selectedAppointment.longitude + "&zoom=15"}
                         target="_blank"
