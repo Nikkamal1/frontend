@@ -181,6 +181,68 @@ export default function AppointmentCalendar() {
     "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
   ];
 
+  {/* Calendar Days */}
+{calendar.map((date, index) => {
+  const dayAppointments = getAppointmentsForDate(date);
+  const isCurrentMonthDay = isCurrentMonth(date);
+  const isTodayDate = isToday(date);
+  const isPast = isPastDate(date);
+  const hasAppointments = dayAppointments.length > 0;
+
+  return (
+    <div
+      key={index}
+      className={`min-h-[100px] p-2 border rounded-lg transition-all duration-200 ${
+        isCurrentMonthDay ? "bg-white" : "bg-gray-50"
+      } ${isTodayDate ? "ring-2 ring-blue-500 bg-blue-50" : ""} ${
+        isPast && !hasAppointments ? "opacity-40" : ""
+      } ${
+        hasAppointments
+          ? "cursor-pointer hover:shadow-md hover:border-blue-300"
+          : "cursor-default"
+      }`}
+      onClick={() => {
+        if (hasAppointments) {
+          setSelectedDate(date);
+        }
+      }}
+    >
+      <div
+        className={`text-sm font-medium mb-1 ${
+          isCurrentMonthDay ? "text-gray-900" : "text-gray-400"
+        } ${isTodayDate ? "text-blue-600 font-bold" : ""} ${
+          hasAppointments ? "font-bold" : ""
+        }`}
+      >
+        {date.getDate()}
+        {hasAppointments && (
+          <span className="ml-1 inline-flex items-center justify-center w-4 h-4 text-xs bg-blue-600 text-white rounded-full">
+            {dayAppointments.length}
+          </span>
+        )}
+      </div>
+
+      {/* Appointment Indicators */}
+      <div className="space-y-1">
+        {dayAppointments.slice(0, 2).map((appointment, idx) => (
+          <div
+            key={idx}
+            className={`text-xs p-1 rounded border ${getStatusColor(appointment.status)}`}
+          >
+            <div className="font-medium truncate">{appointment.hospital}</div>
+            <div className="text-xs opacity-75">{formatTime(appointment.appointment_time)}</div>
+          </div>
+        ))}
+        {dayAppointments.length > 2 && (
+          <div className="text-xs text-blue-600 font-medium text-center">
+            +{dayAppointments.length - 2} อื่นๆ
+          </div>
+        )}
+      </div>
+    </div>
+  );
+})}
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 py-8">
       <div className="max-w-7xl mx-auto px-4">
