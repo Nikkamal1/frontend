@@ -116,7 +116,7 @@ export default function Layout({ children }) {
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0">
         <Navbar user={user} onLogout={handleLogout} onToggleSidebar={toggleSidebar} />
-        <main className="flex-1 pt-16 lg:pt-20 overflow-auto bg-gradient-to-br from-gray-50 to-blue-50">
+        <main className="flex-1 pt-0 lg:pt-0 overflow-auto bg-gradient-to-br from-gray-50 to-blue-50">
           <div className="min-h-full">
             {children}
           </div>
