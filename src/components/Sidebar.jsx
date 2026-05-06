@@ -5,6 +5,7 @@ import { FiHome, FiCalendar, FiList, FiTruck, FiUsers, FiSettings } from "react-
 export default function Sidebar({ role, isOpen, onClose }) {
   const links = {
     user: [
+      {name: "หน้าแรก", to: "/user/home", icon: <FiHome className="w-5 h-5 text-black" /> },
       { name: "แดชบอร์ด", to: "/user/dashboard", icon: <FiHome className="w-5 h-5 text-black" /> },
       { name: "จองคิวรถรับ-ส่ง", to: "/user/reserve", icon: <FiTruck className="w-5 h-5 text-black" /> },
       { name: "รายการจอง", to: "/user/bookings", icon: <FiList className="w-5 h-5 text-black" /> },

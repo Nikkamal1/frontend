@@ -2,6 +2,7 @@ import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
+import Userhome from "./pages/home/userhome.jsx";
 import UserDashboard from "./pages/dashboard/UserDashboard.jsx";
 import StaffDashboard from "./pages/dashboard/StaffDashboard.jsx";
 import AdminDashboard from "./pages/dashboard/AdminDashboard.jsx";
@@ -37,15 +38,24 @@ export default function App() {
       {/* Auth */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      
+
       {/* LINE Callback */}
       <Route path="/line-callback" element={<LineCallback />} />
-      
+
       {/* Privacy Policy & Terms of Use */}
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route path="/terms-of-use" element={<TermsOfUse />} />
 
       {/* User */}
+      <Route path="user/home"
+        element={
+          <ProtectedRoute allowedRoles={["user"]}>
+            <Layout>
+              <Userhome />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/user/dashboard"
         element={
