@@ -60,15 +60,15 @@ function Userhome() {
 
                 {/* Header */}
                 <div className="mb-8">
-                    <div className="flex items-center justify-between"> 
+                    <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-lg font-semibold text-gray-800 leading-tight">เมนูหลัก</p>
-                            <p className="text-xs text-gray-400 mt-0.5">เลือกรายการที่ต้องการ</p>
+                            <p className="text-3xl font-semibold text-gray-800 leading-tight">เมนูหลัก</p>
+                            <p className="text-lg text-gray-400 mt-0.5">เลือกรายการที่ต้องการ</p>
                         </div>
-                        <div className="w-11 h-11 rounded-xl bg-purple-600 flex items-center justify-center shadow-lg shadow-purple-200 flex-shrink-0">
-                            <FiTruck className="w-5 h-5 text-white" />
+                        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                            <FiTruck className="w-8 h-8 text-white" />
                         </div>
-                       
+
                     </div>
                 </div>
 
