@@ -91,7 +91,7 @@ export default function Login() {
           break;
         case "user":
         default:
-          navigate("/user/dashboard", { replace: true });
+          navigate("/user/home", { replace: true });
           break;
       }
 
