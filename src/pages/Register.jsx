@@ -123,18 +123,80 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full mb-4">
-            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-100 relative overflow-hidden">
+
+    {/* Background Effects */}
+    <div className="absolute top-[-100px] left-[-100px] w-[320px] h-[320px] bg-blue-300 opacity-20 rounded-full blur-3xl"></div>
+
+    <div className="absolute bottom-[-100px] right-[-100px] w-[320px] h-[320px] bg-indigo-300 opacity-20 rounded-full blur-3xl"></div>
+
+    <div className="absolute inset-0 bg-[radial-gradient(#dbeafe_1px,transparent_1px)] [background-size:22px_22px] opacity-40"></div>
+
+    {/* Navbar */}
+    <nav className="relative z-20 bg-white/70 backdrop-blur-xl border-b border-white/30 shadow-sm">
+      <div className="max mx-auto px-6 py-4 flex items-center justify-between">
+
+        {/* Logo */}
+        <div className="flex items-center gap-3">
+          <div className="w-11 h-11 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+            <svg
+              className="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
             </svg>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">สมัครสมาชิก</h1>
-          <p className="text-lg text-gray-600">สร้างบัญชีใหม่เพื่อเริ่มใช้งานระบบจองรถรับ-ส่ง</p>
+
+          <div>
+            <h1 className="font-bold text-gray-800 text-l">
+              เว็บแอปพลิเคชันสําหรับบริการผู้สูงอายุไปยังสถานพยาบาลเพื่อยกระดับคุณภาพชีวิตผู้ป่วยในพื้นที่จังหวัดนราธิวาส
+            </h1>
+
+          </div>
         </div>
+
+      
+      </div>
+    </nav>
+
+    {/* Main Content */}
+    <div className="relative z-10 flex items-center justify-center p-4 py-10">
+      <div className="w-full max-w-4xl">
+
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full mb-4 shadow-xl">
+            <svg
+              className="w-8 h-8 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+              />
+            </svg>
+          </div>
+
+          {/* <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+            ระบบจองรถรับ-ส่ง
+          </h1> */}
+
+          <p className="text-lg text-gray-600">
+            สมัครสมาชิกเพื่อจัดการการจองของคุณ
+          </p>
+        </div>
+
 
         <div className="grid lg:grid-cols-2 gap-8 items-center">
           {/* ฟอร์มสมัครสมาชิก */}
@@ -418,6 +480,7 @@ export default function Register() {
           </div>
         </div>
       </div>
+  </div>
     </div>
   );
 }
